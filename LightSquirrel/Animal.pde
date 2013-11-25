@@ -6,6 +6,7 @@ State state;
 ArrayList<ActorRelation> relationships; 
 ArrayList<Light> lightsThatIKnow;
 Box box;
+int pulse;
 
 //CONSTRUCTOR
 public Animal(PVector initialPosition){

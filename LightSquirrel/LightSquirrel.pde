@@ -10,8 +10,6 @@ import processing.serial.*;
 import themidibus.*;
 import java.util.*;
 
-
-
 //MIDI stuff
 MidiBus myBus;
  
