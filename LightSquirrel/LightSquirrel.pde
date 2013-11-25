@@ -135,21 +135,22 @@ void draw(){
   if(!FAKE) {
     kinectStuff();
   } else {
-    pushMatrix();
-
-    scale(0.1);
-    //Set origo to center of screen
-    translate(centerX, centerY);
-    drawRoom();
-    drawActor();
-    drawAnimal();
-    popMatrix();
-
-    moveActor();
-
-    animal.lookAround();
+    drawAndSimulate();
   }
+  animal.lookAround();
   
+}
+
+void drawAndSimulate(){
+  pushMatrix();
+  scale(0.1);
+  //Set origo to center of screen
+  translate(centerX, centerY);
+  drawRoom();
+  drawActor();
+  drawAnimal();
+  popMatrix();
+  moveActor();
 }
 
 void drawRoom(){
@@ -245,6 +246,8 @@ void kinectStuff(){
 
 // -------------- MOUSE ---------------
 void mousePressed() {
+  if(!FAKE) return;
+
   if(overActor) { 
     locked = true; 
   } else {
@@ -261,6 +264,8 @@ void mousePressed() {
 }
 
 void mouseDragged() {
+  if(!FAKE) return;
+
   if(locked) {
     float newX = mouseX*10 - xOffset; 
     float newY = mouseY*10 - yOffset;
@@ -272,6 +277,8 @@ void mouseDragged() {
 }
 
 void mouseReleased() {
+  if(!FAKE) return;
+
   locked = false;
 }
 
