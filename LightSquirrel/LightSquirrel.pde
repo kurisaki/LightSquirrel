@@ -83,10 +83,12 @@ void midiSetup(){
   myBus = new MidiBus(this, -1, "Buss 1");
 }
 
+// ------- World and actors --------
 Room room;
 Box box;
 Light[] lights;
 Actor actor;
+Animal animal;
 
 void setupWorld(){
   room = new Room(5000, 5000, 2400); //Room is 5 x 5 x 2.4 meters
@@ -97,6 +99,7 @@ void setupWorld(){
   };
 
   actor = new Actor(new PVector(0, 1000, -1500));
+  animal = new Animal(new PVector(0, 0, 0));
 }
 
 void setup(){
@@ -143,6 +146,8 @@ void draw(){
     popMatrix();
 
     moveActor();
+
+    animal.lookAround();
   }
   
 }
@@ -185,17 +190,14 @@ void drawActor() {
 
   PVector actorPos = get3dTo2d(actor.getPosition());
   rect(actorPos.x, actorPos.y, actorWidth, actorHeight);
-
-  // Test if the cursor is over the actor 
-
 }
 
 void moveActor() {
-
   PVector actorPos = get3dTo2d(actor.getPosition());
   PVector centerV = new PVector(centerX, centerY);
   actorPos.add(centerV);
 
+  // Test if the cursor is over the actor 
   if (mouseX*10 > actorPos.x - actorWidth && mouseX*10 < actorPos.x + actorWidth && 
       mouseY*10 > actorPos.y - actorHeight && mouseY*10 < actorPos.y + actorHeight) {
     overActor = true;
@@ -219,7 +221,10 @@ PVector get3dTo2d(PVector vector3d) {
 }
 
 void drawAnimal() {
+  PVector pos = get3dTo2d(animal.getPosition());
 
+  fill(255, 0, 0);
+  ellipse(pos.x, pos.y, 100, 100);
 }
 
 

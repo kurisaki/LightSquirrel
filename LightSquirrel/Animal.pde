@@ -22,6 +22,16 @@ public void lookAround(){
 
 	}
 
+	//move
+	float x = random(-10, 10);
+	float z = random(-10, 10);
+
+	position.x += x;
+	position.z += z;
+}
+
+public PVector getPosition() {
+    return position;
 }
 
 }
