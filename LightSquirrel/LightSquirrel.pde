@@ -18,6 +18,7 @@ MidiBus myBus;
 //Serial stuff
 final int BYTE_MIN = 0;
 final int BYTE_MAX = 1;
+final boolean FAKE = true;
 Serial myPort;
 
 
@@ -59,40 +60,57 @@ void serialSetup(){
   myPort.bufferUntil('\n');
 }
 
-
-void midiSetup(){
-  MidiBus.list();
-  myBus = new MidiBus(this, -1, "Buss 1");
-}
-
-
-void setup(){
-  size(xSize,ySize);
-  background(0);
-  
-  serialSetup();
-  kinectSetup();
-  spotlight = new Spotlight(2400);
-  
-  //initialize devices
+void initializeDevices(){
   myPort.write("<setServo1," + 1350 + ">");
   myPort.write("<setServo2," + 2400 + ">");
   myPort.write("<setSpotState," + 0 + ">"); 
   myPort.write("<setBoxState," + 1 + ">"); 
   myPort.write("<set1State," + 0 + ">"); 
   myPort.write("<set2State," + 0 + ">"); 
+}
+
+void midiSetup(){
+  MidiBus.list();
+  myBus = new MidiBus(this, -1, "Buss 1");
+}
+
+void setup(){
+  size(xSize,ySize);
+  frameRate(30);
+  background(0);
   
-  //REMAP 
-  translate(kinectOrigo.x, -kinectOrigo.y, -kinectOrigo.z);
+  spotlight = new Spotlight(2400);
+
+  if (!FAKE) {
+    serialSetup();
+    kinectSetup();
+    initializeDevices();
+    //REMAP 
+    translate(kinectOrigo.x, -kinectOrigo.y, -kinectOrigo.z);
+  }
+  
+
   
 }
 
 // ---------- DRAW ----------
 
+float yPos = 0;
+
 void draw(){
   background(0);
   fill(255);
-  kinectStuff();
+
+
+  background(204);
+  yPos = yPos - 1.0;
+  if (yPos < 0) {
+    yPos = height;
+  }
+  line(0, yPos, width, yPos);
+
+  if(!FAKE)
+    kinectStuff();
   
 }
 
