@@ -21,5 +21,7 @@ public void setState(int aState){
 public Light getLight(){
 	return boxLight;
 }
+
+public PVector getPosition(){ return position ; }
 }
 

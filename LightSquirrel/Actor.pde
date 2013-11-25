@@ -43,6 +43,8 @@ public void setPosition(PVector p){
     acceleration = tempAccel/(speedHistory.size()-1);
 }
 
+public PVector getPosition() { return position; }
+
 public float getSpeed(){
   return speed;
 }

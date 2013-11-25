@@ -20,13 +20,17 @@ public Light(PVector p){
 }
 
 //METHODS
-	public void setState(int aState){
-		state = aState;
-	}
+public void setState(int aState){
+	state = aState;
+}	
+public int getState(){ return state; }
 
-	public void setFrequency(int aFrequency){
-		frequency = aFrequency;
-	}
+public void setFrequency(int aFrequency){
+	frequency = aFrequency;
+}
+
+public PVector getPosition(){ return position; }
+
 }
 
 

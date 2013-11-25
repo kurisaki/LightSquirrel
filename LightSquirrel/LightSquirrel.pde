@@ -24,8 +24,10 @@ Serial myPort;
 
 final PVector kinectOrigo = new PVector(0,1400,-3000); //TO BE MEASURED
 
-int xSize = 640;
-int ySize = 480;
+final int xSize = 1024;
+final int centerX = xSize * 10 / 2;
+final int ySize = 768;
+final int centerY = ySize * 10 / 2;
 
 
 Spotlight spotlight;
@@ -38,6 +40,13 @@ PVector com2d = new PVector();
 
 //Stuff to read from Arduino
 int boxVal = 0;
+
+
+//Simulator stuff
+boolean overActor = false;
+boolean locked = false;
+float xOffset = 0;
+float yOffset = 0;
 
 
 void kinectSetup(){
@@ -74,6 +83,22 @@ void midiSetup(){
   myBus = new MidiBus(this, -1, "Buss 1");
 }
 
+Room room;
+Box box;
+Light[] lights;
+Actor actor;
+
+void setupWorld(){
+  room = new Room(5000, 5000, 2400); //Room is 5 x 5 x 2.4 meters
+  box = new Box();
+  lights = new Light[]{
+    new Light(new PVector(1000, 1000, 0)),
+    new Light(new PVector(2500, 1200, -1200)),
+  };
+
+  actor = new Actor(new PVector(0, 1000, -1500));
+}
+
 void setup(){
   size(xSize,ySize);
   frameRate(30);
@@ -89,7 +114,7 @@ void setup(){
     translate(kinectOrigo.x, -kinectOrigo.y, -kinectOrigo.z);
   }
   
-
+  setupWorld();
   
 }
 
@@ -99,20 +124,106 @@ float yPos = 0;
 
 void draw(){
   background(0);
-  fill(255);
+  fill(0);
+  stroke(255);
+  strokeWeight(10);
 
 
-  background(204);
-  yPos = yPos - 1.0;
-  if (yPos < 0) {
-    yPos = height;
-  }
-  line(0, yPos, width, yPos);
-
-  if(!FAKE)
+  if(!FAKE) {
     kinectStuff();
+  } else {
+    pushMatrix();
+
+    scale(0.1);
+    //Set origo to center of screen
+    translate(centerX, centerY);
+    drawRoom();
+    drawActor();
+    drawAnimal();
+    popMatrix();
+
+    moveActor();
+  }
   
 }
+
+void drawRoom(){
+  //Draw floor
+  fill(0);
+  rectMode(CENTER);
+  int roomWidth = room.getWidth();
+  int roomDepth = room.getDepth();
+  int roomHeight = room.getHeight();
+
+  rect(0, 0, roomWidth, roomDepth);
+  rect(- roomWidth/2 - roomHeight/2, 0, roomHeight, roomDepth);
+  rect(roomWidth/2 + roomHeight/2, 0, roomHeight, roomDepth);
+
+  //Draw box
+  rect(box.getPosition().x, box.getPosition().z, 100, 100); //20x20cm box
+
+  for (Light l : lights){
+    switch (l.getState()){
+      case 2:
+        fill(100);
+        break;
+      default :
+        fill(0);
+      break;  
+    }
+    PVector vector2d = get3dTo2d(l.getPosition());
+    ellipse(vector2d.x, vector2d.y, 100, 100);
+  }
+}
+
+
+  float actorWidth = 300;
+  float actorHeight = 300;
+
+void drawActor() {
+  fill(0, 200, 200);
+
+  PVector actorPos = get3dTo2d(actor.getPosition());
+  rect(actorPos.x, actorPos.y, actorWidth, actorHeight);
+
+  // Test if the cursor is over the actor 
+
+}
+
+void moveActor() {
+
+  PVector actorPos = get3dTo2d(actor.getPosition());
+  PVector centerV = new PVector(centerX, centerY);
+  actorPos.add(centerV);
+
+  if (mouseX*10 > actorPos.x - actorWidth && mouseX*10 < actorPos.x + actorWidth && 
+      mouseY*10 > actorPos.y - actorHeight && mouseY*10 < actorPos.y + actorHeight) {
+    overActor = true;
+  } else {
+    overActor = false;
+  }
+}
+
+PVector get3dTo2d(PVector vector3d) {
+  boolean isOnLeftWall = vector3d.x == room.getWidth() / 2;
+  boolean isOnRightWall = vector3d.x == room.getWidth() / -2;
+
+
+  if(isOnLeftWall){
+    return new PVector(-room.getWidth()/2 - vector3d.y, vector3d.z);
+  } else if(isOnRightWall){
+    return new PVector(room.getWidth()/2 + vector3d.y, vector3d.z);
+  } else {
+    return new PVector(vector3d.x, vector3d.z);
+  }
+}
+
+void drawAnimal() {
+
+}
+
+
+
 
 void kinectStuff(){
   kinect.update();
@@ -125,6 +236,38 @@ void kinectStuff(){
     kinect.getCoM(userList[0],com);
     spotlight.target(com);
   }
+}
+
+// -------------- MOUSE ---------------
+void mousePressed() {
+  if(overActor) { 
+    locked = true; 
+  } else {
+    locked = false;
+  }
+
+  PVector pos = get3dTo2d(actor.getPosition());
+  xOffset = mouseX*10 -pos.x; 
+  yOffset = mouseY*10 -pos.y; 
+
+  println("mouseX: "+mouseX);
+  println("mouseY: "+mouseY);
+  println("locked: "+locked);
+}
+
+void mouseDragged() {
+  if(locked) {
+    float newX = mouseX*10 - xOffset; 
+    float newY = mouseY*10 - yOffset;
+    PVector oldPos = actor.getPosition();
+    oldPos.x = newX;
+    oldPos.z = newY;
+    actor.setPosition(oldPos);
+  }
+}
+
+void mouseReleased() {
+  locked = false;
 }
 
 /*void MIDI(){ //examples of possible MIDI controllers for surround sound!
