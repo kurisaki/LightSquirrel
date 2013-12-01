@@ -36,9 +36,12 @@ int getSafeRadius(){
 	return safeRadius;
 }
 
-PVector getActorVector(PVector animalPosition){
-	PVector something = new PVector(0,0,0);
-	return something;
+PVector getReactionVector(PVector animalPosition){
+	PVector reaction = new PVector(0,0,0);
+
+	
+
+	return reaction;
 }
 
 

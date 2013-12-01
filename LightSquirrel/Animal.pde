@@ -1,37 +1,48 @@
-class Animal{
+class Animal {
 
-//FIELDS
-PVector position;
-State state;
-ArrayList<ActorRelation> relationships; 
-ArrayList<Light> lightsThatIKnow;
-Box box;
+	//FIELDS
+	PVector position;
+	State state;
+	ArrayList<ActorRelation> relationships; 
+	ArrayList<Light> lightsThatIKnow;
+	Box box;
+	int energy = 10000;
 
-//CONSTRUCTOR
-public Animal(PVector initialPosition){
-	position = initialPosition;
-	state = State.RESTING;
-	relationships = new ArrayList<ActorRelation>();
-
-}
-
-//METHODS
-
-public void lookAround(){
-	for (ActorRelation relation : relationships){
+	//CONSTRUCTOR
+	public Animal(PVector initialPosition){
+		position = initialPosition;
+		state = State.RESTING;
+		relationships = new ArrayList<ActorRelation>();
 
 	}
 
-	//move
-	float x = random(-10, 10);
-	float z = random(-10, 10);
+	//METHODS
+	public void update()
+	{
+		move();
+	}
 
-	position.x += x;
-	position.z += z;
-}
+	void move() {
+		PVector move = new PVector(0, 0, 0);
+		for (ActorRelation relation : relationships){
+			PVector vector = relation.getReactionVector();
+			move.add(vector);
+		}
 
-public PVector getPosition() {
-    return position;
-}
+		float maxSpeed = getMaxSpeed();
+		move.limit(maxSpeed);
+
+		position.add(move);
+	}
+
+
+	float getMaxSpeed(){
+		//TODO: calculate based on energy
+		return 1000;
+	}
+
+	public PVector getPosition() {
+		return position;
+	}
 
 }
