@@ -148,6 +148,12 @@ void drawAndSimulate(){
   drawAnimal();
   popMatrix();
   moveActor();
+
+  drawInfo();
+}
+
+void drawInfo(){
+  
 }
 
 void drawRoom(){

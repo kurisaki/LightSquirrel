@@ -1,48 +1,64 @@
 class ActorRelation{
 
-//FIELDS
+	//CONSTANTS
+	static final int MIN_ATTITUDE = -10;
+	static final int MAX_ATTITUDE = 10;
+	static final int MIN_INTEREST = -10;
+	static final int MAX_INTEREST = 10;
+
+	//FIELDS
 	Actor actor;
-	int attitude; //-10 to +10
-	int interest; // -10 to +10
+	Animal animal;
+	int attitude;
+	int interest;
 	int dangerRadius;
 	int safeRadius;
 
-//CONSTRUCTOR
-public ActorRelation(Actor target){
-	actor = target;
-	attitude = 0;
-	interest = 0;
-	dangerRadius = 1000;
-	safeRadius = 2000;
-}
+	//CONSTRUCTOR
+	public ActorRelation(Actor anActor, Animal anAnimal){
+		actor = anActor;
+		animal = anAnimal;
+		attitude = 0;
+		interest = 0;
+		dangerRadius = 1000;
+		safeRadius = 2000;
+	}
 
-Actor getActor(){
-	return actor;
-}
+	PVector getReactionVector(){
+		//Copy animal position
+		PVector reaction = animal.getPosition().get();
+		//Get direction to actor
+		reaction.sub(actor.getPosition());
 
-int getAttitude(){
-	return attitude;
-}
+		//React according to attitude
+		reaction.normalize();
+		reaction.mult(10 * attitude);
 
-int getInterest(){
-	return interest;
-}
+		return reaction;
+	}
 
-int getDangerRadius(){
-	return dangerRadius;
-}
+	void updateAttitude(){
+		final float SPEED_THRESHOLD = 10;
+		final float ACCELERATION_THRESHOLD = 10;
 
-int getSafeRadius(){
-	return safeRadius;
-}
+		float speed = actor.getSpeed();
+		float acceleration = actor.getAcceleration();
 
-PVector getReactionVector(PVector animalPosition){
-	PVector reaction = new PVector(0,0,0);
+		//Update attitude based on speed and acceleration of actor
+		//TODO: Make more complex implementation, e.g. startle
+		if(speed > SPEED_THRESHOLD || acceleration > ACCELERATION_THRESHOLD){
+			if(attitude > MIN_ATTITUDE){
+				attitude--;
+			}
+		} else {
+			if(attitude < MAX_ATTITUDE){				
+				attitude++;
+			}
+		}
+	}
 
-	
-
-	return reaction;
-}
-
+	void updateInterest(){
+		//TOOD
+	}
 
 }
