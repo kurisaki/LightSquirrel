@@ -10,6 +10,13 @@ import processing.serial.*;
 import themidibus.*;
 import java.util.*;
 
+//Values to read from arduino:
+int box1 = 0;
+int box2 = 0;
+int light1 = 0;
+int light2 = 0;
+
+
 //MIDI stuff
 MidiBus myBus;
  
@@ -18,6 +25,8 @@ final int BYTE_MIN = 0;
 final int BYTE_MAX = 1;
 final boolean FAKE = true;
 Serial myPort;
+
+String serial;
 
 
 final PVector kinectOrigo = new PVector(0,1400,-3000); //TO BE MEASURED
@@ -106,7 +115,8 @@ void setup(){
   background(0);
   
   spotlight = new Spotlight(2400);
-
+    
+    serialSetup();
   if (!FAKE) {
     serialSetup();
     kinectSetup();
@@ -136,7 +146,7 @@ void draw(){
     drawAndSimulate();
   }
   animal.lookAround();
-  
+  spotlight.target(actor.getPosition());
 }
 
 void drawAndSimulate(){
@@ -278,6 +288,19 @@ void mouseReleased() {
   if(!FAKE) return;
 
   locked = false;
+}
+
+
+void serialEvent(Serial p){
+    String serial = myPort.readString();
+    if (serial != null) {  //if the string is not empty, print the following    
+      int[] a = int(split(serial, ','));
+      box1 = a[0];
+      box2 = a[1];
+      light1 = a[2];
+      light2 = a[3];
+      println(box1 + " " + box2 + " " + light1 + " " + light2);
+    }  
 }
 
 /*void MIDI(){ //examples of possible MIDI controllers for surround sound!

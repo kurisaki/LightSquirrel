@@ -1,4 +1,5 @@
-class Spotlight{//FIELDS
+class Spotlight{
+//FIELDS
 
 private PVector spotPosition;
 
@@ -50,5 +51,6 @@ void target(PVector target){
   myPort.write("<setServo1," + servo1 + ">");
   myPort.write("<setServo2," + servo2 + ">");
   }
-  
+
 }
+
