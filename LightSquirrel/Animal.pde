@@ -13,6 +13,7 @@ class Animal {
 	Box box;
 	int energy = 10000;
 	PVector moveVector;
+	int pulse;
 
 	//CONSTRUCTOR
 	public Animal(PVector initialPosition){
