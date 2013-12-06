@@ -1,15 +1,27 @@
 class ActorRelation extends Relation{
 
-//FIELDS
+	//CONSTANTS
+	static final int MIN_ATTITUDE = -10;
+	static final int MAX_ATTITUDE = 10;
+	static final int MIN_INTEREST = -10;
+	static final int MAX_INTEREST = 10;
+
+	//FIELDS
 	Actor actor;
 	Animal animal;
+<<<<<<< HEAD
 	int attitude; //-10 to +10
 	int interest; // -10 to +10
+=======
+	int attitude;
+	int interest;
+>>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
 	int dangerRadius;
 	int safeRadius;
     float speed = -20;
 
 
+<<<<<<< HEAD
 //CONSTRUCTOR
 public ActorRelation(Actor actor, Animal animal){
 	this.actor = actor;
@@ -19,32 +31,54 @@ public ActorRelation(Actor actor, Animal animal){
 	dangerRadius = 1000;
 	safeRadius = 2000;
 }
+=======
+	//CONSTRUCTOR
+	public ActorRelation(Actor anActor, Animal anAnimal){
+		actor = anActor;
+		animal = anAnimal;
+		attitude = 0;
+		interest = 0;
+		dangerRadius = 1000;
+		safeRadius = 2000;
+	}
+>>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
 
-Actor getActor(){
-	return actor;
-}
+	PVector getReactionVector(){
+		//Copy animal position
+		PVector reaction = animal.getPosition().get();
+		//Get direction to actor
+		reaction.sub(actor.getPosition());
 
-int getAttitude(){
-	return attitude;
-}
+		//React according to attitude
+		reaction.normalize();
+		reaction.mult(10 * attitude);
 
-int getInterest(){
-	return interest;
-}
+		return reaction;
+	}
 
-int getDangerRadius(){
-	return dangerRadius;
-}
+	void updateAttitude(){
+		final float SPEED_THRESHOLD = 10;
+		final float ACCELERATION_THRESHOLD = 10;
 
-int getSafeRadius(){
-	return safeRadius;
-}
+		float speed = actor.getSpeed();
+		float acceleration = actor.getAcceleration();
 
-PVector getActorVector(PVector animalPosition){
-	PVector something = new PVector(0,0,0);
-	return something;
-}
+		//Update attitude based on speed and acceleration of actor
+		//TODO: Make more complex implementation, e.g. startle
+		if(speed > SPEED_THRESHOLD || acceleration > ACCELERATION_THRESHOLD){
+			if(attitude > MIN_ATTITUDE){
+				attitude--;
+			}
+		} else {
+			if(attitude < MAX_ATTITUDE){				
+				attitude++;
+			}
+		}
+	}
 
+	void updateInterest(){
+		//TOOD
+	}
 
 PVector getResultVector(){
 	PVector something = PVector.sub(actor.getPosition(), animal.getPosition());

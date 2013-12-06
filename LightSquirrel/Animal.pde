@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 class Animal{
 
 //FIELDS
@@ -35,11 +36,26 @@ public Animal(PVector initialPosition){
 	state = State.RESTING;
 	relationships = new ArrayList<Relation>();
 	lightsIKnow = new ArrayList<Light>();
+=======
+class Animal {
+>>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
 
-}
+	//CONSTANTS
+	static final int SLEEP_THRESHOLD = 1000;
+	static final int HIDE_THRESHOLD = 3000;
+	static final int RUN_THRESHOLD = 5000;
 
-//METHODS
+	//FIELDS
+	PVector position;
+	State state;
+	ArrayList<ActorRelation> relationships; 
+	ArrayList<Light> lightsThatIKnow;
+	Box box;
+	int energy = 10000;
+	PVector moveVector;
+	int pulse;
 
+<<<<<<< HEAD
 public void createRelationship(Actor actor){
 	relationships.add(new ActorRelation(actor, this));
 	//create a new relationship and add it to the list
@@ -48,6 +64,13 @@ public void createRelationship(Actor actor){
 public void killRelationship(){
 	//remove relationship from list
 }
+=======
+	//CONSTRUCTOR
+	public Animal(PVector initialPosition){
+		position = initialPosition;
+		state = State.RESTING;
+		relationships = new ArrayList<ActorRelation>();
+>>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
 
 private void setMaxSpeed(float s){
 	maxSpeed = s; //calculate from energylevel
@@ -61,6 +84,7 @@ private void updateEnergy(){
 	//add or subtract energy based on movement
 }
 
+<<<<<<< HEAD
 public void lookAround(){
 	//check for new relationships, delete lost
 	//update existing relationships
@@ -79,10 +103,69 @@ public void act(){
 	position.x += move.x;
 	position.z += move.z;
 }
+=======
+	//METHODS
+	public void update()
+	{
+		updateRelations();
+		updateMoveVector();
 
-public PVector getPosition() {
-    return position;
-}
+		if(energy < SLEEP_THRESHOLD){
+			sleep();
+		} else if (energy < HIDE_THRESHOLD) {
+			hide();
+		} else if (energy < RUN_THRESHOLD) {
+			run();
+		} else {
+			explore();
+		}
+>>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
+
+		position.add(moveVector);
+	}
+
+	void updateRelations() {
+		for (ActorRelation relation : relationships){
+			relation.updateAttitude();
+			relation.updateInterest();
+		}
+	}
+
+	void updateMoveVector() {
+		moveVector = new PVector(0, 0, 0);
+		for (ActorRelation relation : relationships){
+			PVector vector = relation.getReactionVector();
+			moveVector.add(vector);
+		}
+
+		float maxSpeed = getMaxSpeed();
+		moveVector.limit(maxSpeed);
+	}
+
+	void hide() {
+		//TODO
+	}
+
+	void sleep(){
+		//TODO
+	}
+
+	void run() {
+		//TODO
+	}
+
+	void explore() {
+
+	}
+
+	float getMaxSpeed(){
+		//TODO: calculate based on energy
+		return 1000;
+	}
+
+	public PVector getPosition() {
+		return position;
+	}
 
 private PVector getNoise(){
 	PVector noiseComponent = new PVector(0,0,0);
