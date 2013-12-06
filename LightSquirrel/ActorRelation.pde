@@ -1,4 +1,4 @@
-class ActorRelation extends Relation{
+class ActorRelation{
 
 	//CONSTANTS
 	static final int MIN_ATTITUDE = -10;
@@ -9,29 +9,15 @@ class ActorRelation extends Relation{
 	//FIELDS
 	Actor actor;
 	Animal animal;
-<<<<<<< HEAD
-	int attitude; //-10 to +10
-	int interest; // -10 to +10
-=======
+
 	int attitude;
 	int interest;
->>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
 	int dangerRadius;
 	int safeRadius;
     float speed = -20;
 
 
-<<<<<<< HEAD
-//CONSTRUCTOR
-public ActorRelation(Actor actor, Animal animal){
-	this.actor = actor;
-	this.animal = animal;
-	attitude = 0;
-	interest = 0;
-	dangerRadius = 1000;
-	safeRadius = 2000;
-}
-=======
+
 	//CONSTRUCTOR
 	public ActorRelation(Actor anActor, Animal anAnimal){
 		actor = anActor;
@@ -41,7 +27,6 @@ public ActorRelation(Actor actor, Animal animal){
 		dangerRadius = 1000;
 		safeRadius = 2000;
 	}
->>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
 
 	PVector getReactionVector(){
 		//Copy animal position
@@ -52,6 +37,8 @@ public ActorRelation(Actor actor, Animal animal){
 		//React according to attitude
 		reaction.normalize();
 		reaction.mult(10 * attitude);
+
+		//TODO Vary reaction multiplier by position/zones 
 
 		return reaction;
 	}
@@ -80,20 +67,6 @@ public ActorRelation(Actor actor, Animal animal){
 		//TOOD
 	}
 
-PVector getResultVector(){
-	PVector something = PVector.sub(actor.getPosition(), animal.getPosition());
-
-	float distance = something.mag();
-	if(distance<dangerRadius){
-		speed = -50;
-	} else if (distance >=dangerRadius && distance < safeRadius){
-		speed = -10;
-	} else if (distance >= safeRadius){
-		speed = 0;
-	}
-	something.setMag(speed);
-	return something;
-}
 
 public void updateRelationship(){
 

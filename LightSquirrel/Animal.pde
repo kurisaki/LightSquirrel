@@ -1,110 +1,74 @@
-<<<<<<< HEAD
 class Animal{
 
+//CONSTANTS
+	static final int SLEEP_THRESHOLD = 1000;
+	static final int HIDE_THRESHOLD = 3000;
+		// TIRED: getting to a light becomes first priority.
+		// Will try to avoid other users' danger zone. If flee is triggered while tired, head straight for light.
+		// Will hide in light if close enough. Can only hide in box if lid is open.
+	static final int RUN_THRESHOLD = 5000;
+
+	static final float NOISE_ROUGHNESS = 0.05;
+
 //FIELDS
-PVector position;
-State state;
-ArrayList<Relation> relationships; 
-ArrayList<Light> lightsIKnow;
-Box box;
-float t = 0; //for calls to noise
-float noiseRoughness =  0.05;
-float noiseFactor = 10;
-float maxSpeed = 100;
+	PVector position;
+	PVector moveVector;
+	State state;
+		// FLEEING: is following "flee" script -
+		// While fleeing, ignores energy level, (but drains energy),
+		// ignores other users' mid-zone, but will trigger new flee if enters danger zone.
+		// If a flee is triggered from within flee state three consecutive times, the next flee will be aimed straight at a light, in order to hide.
+		// HIDING: unmoving in box or light
+		// if energy level is at max level for longer than a given time without interruptions, animal will leave and begin moving about.
+		// can only leave box if lid is off. If in box and lid is lifted, go straight into flee mode.
 
-float energyLevel = 10;
-float regenerate = 0.01;
-float excitement = 5;
+	ArrayList<ActorRelation> relationships; 
+	ArrayList<Light> lightsThatIKnow;
+	Box box;
+	int energy = 10000;
 
-boolean fleeing = false; //is following "flee" script -
-//While fleeing, ignores energy level, (but drains energy),
-// ignores other users' mid-zone, but will trigger new flee if enters danger zone.
-// If a flee is triggered consecutively from within flee state three times, the next flee will be aimed straight at a light, in order to hide.
-//
-boolean hiding = false; // state: hiding in box or light
-//if energy level is at max level for longer than a given time without interruptions, animal will leave and begin moving about.
-//can only leave box if lid is off. If in box and lid is lifted, go straight into flee mode.
-Light hidingPlace;
-boolean tired = false; //if true, getting to a light becomes first priority.
-//Will try to avoid other users' danger zone. If flee is triggered while tired, head straight for light.
-// Will hide in light if close enough. Can only hide in box if lid is open.
+	float t = 0; //for calls to noise
+	
+	float noiseFactor = 10; //Degree of influence of noise
 
+	float maxSpeed = 50;
+
+	float excitement = 5; //general level of excitement - connected to pulse and sound speed.
+
+	Light hidingPlace; //currently hiding 
 
 //CONSTRUCTOR
 public Animal(PVector initialPosition){
 	position = initialPosition;
 	state = State.RESTING;
-	relationships = new ArrayList<Relation>();
-	lightsIKnow = new ArrayList<Light>();
-=======
-class Animal {
->>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
+	relationships = new ArrayList<ActorRelation>();
+	lightsThatIKnow = new ArrayList<Light>();
+}
 
-	//CONSTANTS
-	static final int SLEEP_THRESHOLD = 1000;
-	static final int HIDE_THRESHOLD = 3000;
-	static final int RUN_THRESHOLD = 5000;
 
-	//FIELDS
-	PVector position;
-	State state;
-	ArrayList<ActorRelation> relationships; 
-	ArrayList<Light> lightsThatIKnow;
-	Box box;
-	int energy = 10000;
-	PVector moveVector;
-	int pulse;
-
-<<<<<<< HEAD
+	//METHODS
 public void createRelationship(Actor actor){
 	relationships.add(new ActorRelation(actor, this));
 	//create a new relationship and add it to the list
 }
 
 public void killRelationship(){
-	//remove relationship from list
-}
-=======
-	//CONSTRUCTOR
-	public Animal(PVector initialPosition){
-		position = initialPosition;
-		state = State.RESTING;
-		relationships = new ArrayList<ActorRelation>();
->>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
-
-private void setMaxSpeed(float s){
-	maxSpeed = s; //calculate from energylevel
+	//TODO: remove relationship from list
 }
 
 private void updateEnergy(){
-	if(energy <=10){
-		energy += regenerate;
-	}
-	//refresh energy level
+	//TODO: refresh energy, more if resting.
 	//add or subtract energy based on movement
 }
 
-<<<<<<< HEAD
 public void lookAround(){
 	//check for new relationships, delete lost
 	//update existing relationships
 	//check for specific triggers
 	//move
-	act();
+	update();
 
 }
-
-public void act(){
-	//get movement vectors
-	//move OR trigger/update scripted behaviour
-	//make sound
-	PVector move = getMovementVector();
-
-	position.x += move.x;
-	position.z += move.z;
-}
-=======
-	//METHODS
 	public void update()
 	{
 		updateRelations();
@@ -119,9 +83,10 @@ public void act(){
 		} else {
 			explore();
 		}
->>>>>>> cf3cd9f56caba0b70cefdf0491e1bd725e9d3253
 
 		position.add(moveVector);
+
+		//TODO: make sound
 	}
 
 	void updateRelations() {
@@ -174,25 +139,9 @@ private PVector getNoise(){
         noiseComponent.z = map(noise(t+20000), 0,1,-1,1);
 	noiseComponent.setMag(noiseFactor);
 
-	t += noiseRoughness;
+	t += NOISE_ROUGHNESS;
 
 	return noiseComponent;
-}
-
-private PVector getMovementVector(){
-	PVector result = new PVector(0,0,0);
-	for (Relation relation : relationships){
-		if(relation.)
-		result.add(relation.getResultVector());
-	}
-
-	result.add(getNoise());
-
-	if(result.mag() > maxSpeed){
-		result.setMag(maxSpeed);
-	}
-
-	return result;
 }
 
 }
