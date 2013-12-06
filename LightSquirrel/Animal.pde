@@ -32,6 +32,7 @@ class Animal{
 	float noiseFactor = 10; //Degree of influence of noise
 
 	float maxSpeed = 50;
+	float minSpeed = 1;
 
 	float excitement = 5; //general level of excitement - connected to pulse and sound speed.
 
@@ -103,6 +104,8 @@ public void lookAround(){
 			moveVector.add(vector);
 		}
 
+		moveVector.add(getNoise());
+
 		float maxSpeed = getMaxSpeed();
 		moveVector.limit(maxSpeed);
 	}
@@ -125,7 +128,11 @@ public void lookAround(){
 
 	float getMaxSpeed(){
 		//TODO: calculate based on energy
-		return 1000;
+		return maxSpeed;
+	}
+
+	float getMinSpeed(){
+		return minSpeed;
 	}
 
 	public PVector getPosition() {

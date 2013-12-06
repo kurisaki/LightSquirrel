@@ -1,56 +1,68 @@
-class Actor{
+class Actor {
   //FIELDS
   PVector position;
   float acceleration;
   float speed;
-  final int speedAvgFrames = 10;
-  final int accelAvgFrames = 30;
+
   LinkedList<PVector> history = new LinkedList<PVector>();
   LinkedList<Float> speedHistory = new LinkedList<Float>();
 
+  LinkedList<PVector> positions = new LinkedList<PVector>();
+  LinkedList<PVector> velocities = new LinkedList<PVector>();
+  LinkedList<Float> speeds = new LinkedList<Float>();
+  LinkedList<Float> accelerations = new LinkedList<Float>();
+
+
   //CONSTRUCTOR
-  public Actor(PVector p){
+  public Actor(PVector p) {
     position = p;
+    positions.add(p);
+
   }
 
   //METHODS
-  public void setPosition(PVector p){
+  public void setPosition(PVector p) {
+
+  //TODO: convert values to m/s(m/s2)? 
+  //TODO: add some kind of filtering (median) or averaging over time
+  //TODO: make sure this function is called every frame, even if there is no change in position. 
+
+    //Update position and store in list
     position = p;
-    
-    history.add(p);
+    positions.add(new PVector(p.x, p.y, p.z));
+    textSize(24);
+    fill(255);
 
-    if(history.size()>speedAvgFrames){
-      history.remove();
-    }
+    int lastPosition = positions.size()-1;
+    if(lastPosition >1){
+      //Calculate velocity (distance traveled in the last 1/30 second) and store in list
+      PVector velocity = PVector.sub(positions.get(lastPosition), positions.get(lastPosition-1));
+      velocities.add(velocity);
 
-    PVector temp = history.get(0).get();
-    for(int i=1; i<history.size();i++){
-      temp.sub(history.get(i));
-    }
-    speed = temp.mag();
+      //Calculate speed (magnitude of velocity) and store
+      speed = velocity.mag();
+      speeds.add(speed);
 
-    speedHistory.add(speed);
+      int lastSpeed = speeds.size()-1;
+      if(lastSpeed >1){
+        //Calculate acceleration (change in speed over the last 1/30 second) and store
+        acceleration = speeds.get(lastSpeed)/speeds.get(lastSpeed-1);
+        accelerations.add(acceleration);
 
-    if(speedHistory.size()>accelAvgFrames){
-      speedHistory.remove();
+      }
     }
-      float tempAccel = 0;
-    for (int i = 1; i<speedHistory.size(); i++){
-      float lastSpeed = speedHistory.get(i-1);
-      float newSpeed = speedHistory.get(i);
-      tempAccel = abs(newSpeed-lastSpeed);
-    }
-      acceleration = tempAccel/(speedHistory.size()-1);
   }
 
-  public PVector getPosition() { return position; }
+  public PVector getPosition() { 
+    return position;
+  }
 
-  public float getSpeed(){
+  public float getSpeed() {
     return speed;
   }
 
-  public float getAcceleration(){
+  public float getAcceleration() {
     return acceleration;
   }
-
 }
+

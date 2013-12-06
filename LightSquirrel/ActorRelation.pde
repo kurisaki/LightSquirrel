@@ -12,8 +12,9 @@ class ActorRelation{
 
 	int attitude;
 	int interest;
-	int dangerRadius;
-	int safeRadius;
+	float currentRadius;
+	float dangerRadius;
+	float safeRadius;
     float speed = -20;
 
 
@@ -33,13 +34,19 @@ class ActorRelation{
 		PVector reaction = animal.getPosition().get();
 		//Get direction to actor
 		reaction.sub(actor.getPosition());
-
+		//Get distance to actor
+		currentRadius = reaction.mag();
 		//React according to attitude
 		reaction.normalize();
-		reaction.mult(10 * attitude);
-
-		//TODO Vary reaction multiplier by position/zones 
-
+		if(currentRadius <= dangerRadius){
+			reaction.mult(20 * attitude);
+		} else if(currentRadius > dangerRadius && currentRadius <= safeRadius){
+			float a = (animal.getMinSpeed() - animal.getMaxSpeed()/safeRadius);
+			float f = a*(currentRadius-dangerRadius) + animal.getMaxSpeed();
+			reaction.mult(f * attitude);
+		} else if(currentRadius > safeRadius){
+			reaction.mult(1 * attitude);		
+		}
 		return reaction;
 	}
 
