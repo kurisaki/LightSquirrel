@@ -107,6 +107,7 @@ void setupWorld(){
 
   actor = new Actor(new PVector(0, 1000, -1500));
   animal = new Animal(new PVector(0, 0, 0));
+  animal.createRelationship(actor);
 }
 
 void setup(){
@@ -116,7 +117,6 @@ void setup(){
   
   spotlight = new Spotlight(2400);
     
-    serialSetup();
   if (!FAKE) {
     serialSetup();
     kinectSetup();

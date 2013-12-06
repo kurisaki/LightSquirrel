@@ -48,8 +48,8 @@ void target(PVector target){
   int servo2 = (int)map(angleXY, -90,90,700,2100);
   servo2 = constrain(servo2, 700,2100);
 
-  myPort.write("<setServo1," + servo1 + ">");
-  myPort.write("<setServo2," + servo2 + ">");
+  //myPort.write("<setServo1," + servo1 + ">");
+  //myPort.write("<setServo2," + servo2 + ">");
   }
 
 }
