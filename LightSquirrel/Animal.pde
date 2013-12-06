@@ -45,7 +45,7 @@ class Animal{
 //CONSTRUCTOR
 public Animal(PVector initialPosition){
 	position = initialPosition;
-	state = State.RESTING;
+	state = State.HIDING;
 	relationships = new ArrayList<ActorRelation>();
 	lightsThatIKnow = new ArrayList<Light>();
 }

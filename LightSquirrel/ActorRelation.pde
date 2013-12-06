@@ -3,8 +3,13 @@ class ActorRelation{
 	//CONSTANTS
 	static final int MIN_ATTITUDE = -10;
 	static final int MAX_ATTITUDE = 10;
+
+	//ATTITUDE determines speed of movement (boldness/skittishness), attraction or repulsion,
+	// sensitivity to being startled (thresholds), size of zones
 	static final int MIN_INTEREST = -10;
 	static final int MAX_INTEREST = 10;
+	//INTEREST decreases with total time exposed to user, increases with actor movement, drops when near limit is reached?
+	// determines strength of attraction/repulsion compared with others
 
 	//FIELDS
 	Actor actor;
@@ -39,8 +44,10 @@ class ActorRelation{
 		//React according to attitude
 		reaction.normalize();
 		if(currentRadius <= dangerRadius){
-			reaction.mult(20 * attitude);
+			reaction.mult(maxSpeed * attitude);
 		} else if(currentRadius > dangerRadius && currentRadius <= safeRadius){
+			//Linear drop over range of zone from maxSpeed to minSpeed
+			//TODO: make quadratic/exponential?
 			float a = (animal.getMinSpeed() - animal.getMaxSpeed()/safeRadius);
 			float f = a*(currentRadius-dangerRadius) + animal.getMaxSpeed();
 			reaction.mult(f * attitude);
