@@ -57,8 +57,12 @@ class ActorRelation{
 		float speed = actor.getSpeed();
 		float acceleration = actor.getAcceleration();
 
-		//Update attitude based on speed and acceleration of actor
+		//TODO: (possibly) Update attitude based on speed and acceleration of actor
 		//TODO: Make more complex implementation, e.g. startle
+		//TODO: tweak settings for thresholds, and measure speed/acceleration over time…
+		//In addition to decreasing attitude, acceleration over a panic threshold will trigger the flight response.
+		//Positive modifiers for movement towards animal and proximity, negative modifier for movement away.
+		
 		if(speed > SPEED_THRESHOLD || acceleration > ACCELERATION_THRESHOLD){
 			if(attitude > MIN_ATTITUDE){
 				attitude--;

@@ -3,6 +3,7 @@ class Actor {
   PVector position;
   float acceleration;
   float speed;
+  int userID;
 
   LinkedList<PVector> history = new LinkedList<PVector>();
   LinkedList<Float> speedHistory = new LinkedList<Float>();
@@ -15,6 +16,7 @@ class Actor {
 
   //CONSTRUCTOR
   public Actor(PVector p) {
+    //TODO: create link of some sort between game user and kinect user
     position = p;
     positions.add(p);
 
@@ -30,9 +32,6 @@ class Actor {
     //Update position and store in list
     position = p;
     positions.add(new PVector(p.x, p.y, p.z));
-    textSize(24);
-    fill(255);
-
     int lastPosition = positions.size()-1;
     if(lastPosition >1){
       //Calculate velocity (distance traveled in the last 1/30 second) and store in list
@@ -64,5 +63,8 @@ class Actor {
   public float getAcceleration() {
     return acceleration;
   }
+
+//TODO: find the size of the actor…
+
 }
 

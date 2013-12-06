@@ -21,13 +21,17 @@ class Animal{
 		// HIDING: unmoving in box or light
 		// if energy level is at max level for longer than a given time without interruptions, animal will leave and begin moving about.
 		// can only leave box if lid is off. If in box and lid is lifted, go straight into flee mode.
+		// AVOIDING: amble around, but try to avoid users
+		// INVESTIGATING: approach the friendly user with the highest interest, or some optimal combination of attitude and interest
+		// (if tired, value attitude over interest? :-) )
 
 	ArrayList<ActorRelation> relationships; 
 	ArrayList<Light> lightsThatIKnow;
 	Box box;
+
 	int energy = 10000;
 
-	float t = 0; //for calls to noise
+	float t = 0; //counter for calls to noise
 	
 	float noiseFactor = 10; //Degree of influence of noise
 
@@ -48,96 +52,94 @@ public Animal(PVector initialPosition){
 
 
 	//METHODS
-public void createRelationship(Actor actor){
+public void createRelationship(Actor actor) {
 	relationships.add(new ActorRelation(actor, this));
 	//create a new relationship and add it to the list
 }
 
-public void killRelationship(){
+public void killRelationship() {
 	//TODO: remove relationship from list
 }
 
-private void updateEnergy(){
+public void discoverLight(Light aLight) {
+	lightsThatIKnow.add(aLight);
+}
+
+public void update() {
+	updateRelations();
+	updateMoveVector();
+
+	if(energy < SLEEP_THRESHOLD){
+		sleep();
+	} else if (energy < HIDE_THRESHOLD) {
+		hide();
+	} else if (energy < RUN_THRESHOLD) {
+		run();
+	} else {
+		explore();
+	}
+
+	position.add(moveVector);
+
+	//TODO: make sound
+	}
+
+void updateRelations() {
+	for (ActorRelation relation : relationships){
+		relation.updateAttitude();
+		relation.updateInterest();
+	}
+}
+
+void updateMoveVector() {
+	moveVector = new PVector(0, 0, 0);
+	for (ActorRelation relation : relationships){
+		PVector vector = relation.getReactionVector();
+		moveVector.add(vector);
+	}
+
+	moveVector.add(getNoise());
+
+	float maxSpeed = getMaxSpeed();
+	moveVector.limit(maxSpeed);
+}
+
+void updateEnergy(){
 	//TODO: refresh energy, more if resting.
 	//add or subtract energy based on movement
 }
 
-public void lookAround(){
-	//check for new relationships, delete lost
-	//update existing relationships
-	//check for specific triggers
-	//move
-	update();
+void flee() {
 
 }
-	public void update()
-	{
-		updateRelations();
-		updateMoveVector();
+void hide() {
+	//TODO
+}
 
-		if(energy < SLEEP_THRESHOLD){
-			sleep();
-		} else if (energy < HIDE_THRESHOLD) {
-			hide();
-		} else if (energy < RUN_THRESHOLD) {
-			run();
-		} else {
-			explore();
-		}
+void sleep() {
+	//TODO
+}
 
-		position.add(moveVector);
+void run() {
+	//TODO
+}
 
-		//TODO: make sound
-	}
+void explore() {
 
-	void updateRelations() {
-		for (ActorRelation relation : relationships){
-			relation.updateAttitude();
-			relation.updateInterest();
-		}
-	}
+}
 
-	void updateMoveVector() {
-		moveVector = new PVector(0, 0, 0);
-		for (ActorRelation relation : relationships){
-			PVector vector = relation.getReactionVector();
-			moveVector.add(vector);
-		}
-
-		moveVector.add(getNoise());
-
-		float maxSpeed = getMaxSpeed();
-		moveVector.limit(maxSpeed);
-	}
-
-	void hide() {
-		//TODO
-	}
-
-	void sleep(){
-		//TODO
-	}
-
-	void run() {
-		//TODO
-	}
-
-	void explore() {
-
-	}
-
-	float getMaxSpeed(){
+float getMaxSpeed(){
 		//TODO: calculate based on energy
-		return maxSpeed;
-	}
+	return maxSpeed;
+}
 
-	float getMinSpeed(){
-		return minSpeed;
-	}
+float getMinSpeed(){
+	return minSpeed;
+}
 
-	public PVector getPosition() {
-		return position;
-	}
+public PVector getPosition() {
+	return position;
+}
 
 private PVector getNoise(){
 	PVector noiseComponent = new PVector(0,0,0);

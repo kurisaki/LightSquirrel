@@ -28,8 +28,8 @@ Serial myPort;
 
 String serial;
 
-
-final PVector kinectOrigo = new PVector(0,1400,-3000); //TO BE MEASURED
+//Environmental constants
+final PVector KINECT_ORIGO = new PVector(0,1400,-3000); //TO BE MEASURED
 
 final int xSize = 1024;
 final int centerX = xSize * 10 / 2;
@@ -45,10 +45,6 @@ SimpleOpenNI  kinect;
 PVector com = new PVector();                                   
 PVector com2d = new PVector(); 
 
-//Stuff to read from Arduino
-int boxVal = 0;
-
-
 //Simulator stuff
 boolean overActor = false;
 boolean locked = false;
@@ -56,6 +52,7 @@ float xOffset = 0;
 float yOffset = 0;
 
 
+// ---------- SETUP ----------
 void kinectSetup(){
   kinect = new SimpleOpenNI(this);
   if(kinect.isInit() == false)
@@ -76,13 +73,13 @@ void serialSetup(){
   myPort.bufferUntil('\n');
 }
 
-void initializeDevices(){
+void initializeDevices(){ //Remember to set everything to zero!
   myPort.write("<setServo1," + 1350 + ">");
-  myPort.write("<setServo2," + 2400 + ">");
-  myPort.write("<setSpotState," + 0 + ">"); 
-  myPort.write("<setBoxState," + 1 + ">"); 
-  myPort.write("<set1State," + 0 + ">"); 
-  myPort.write("<set2State," + 0 + ">"); 
+  myPort.write("<setServo2," + 1500 + ">");
+  myPort.write("<setSpotState," + 2 + ">"); 
+  myPort.write("<setBoxState," + 2 + ">"); 
+  myPort.write("<set1State," + 2 + ">"); 
+  myPort.write("<set2State," + 2 + ">"); 
 }
 
 void midiSetup(){
@@ -122,7 +119,7 @@ void setup(){
     kinectSetup();
     initializeDevices();
     //REMAP 
-    translate(kinectOrigo.x, -kinectOrigo.y, -kinectOrigo.z);
+    translate(KINECT_ORIGO.x, -KINECT_ORIGO.y, -KINECT_ORIGO.z);
   }
   
   setupWorld();  
@@ -135,7 +132,9 @@ void draw(){
   fill(0);
   stroke(255);
   strokeWeight(10);
-
+  textSize(12);
+  fill(255);
+  text(frameRate, 10,10);
 
   if(!FAKE) {
     kinectStuff();
@@ -307,9 +306,12 @@ void serialEvent(Serial p){
     }  
 }
 
-/*void MIDI(){ //examples of possible MIDI controllers for surround sound!
-  int diversity = 127; //distance from center  
-  myBus.sendControllerChange(0,25,diversity);
-  int soundAngle = 0; //angle, clockwise
-  myBus.sendControllerChange(0,24,soundAngle);
-}*/
+void onNewUser(int userID){
+  //TODO: create new in-game user with link to kinect user
+}
+
+void onLostUser(int userID){
+  //TODO: kill in-game user
+}
+
+
