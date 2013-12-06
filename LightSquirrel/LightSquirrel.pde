@@ -125,13 +125,10 @@ void setup(){
     translate(kinectOrigo.x, -kinectOrigo.y, -kinectOrigo.z);
   }
   
-  setupWorld();
-  
+  setupWorld();  
 }
 
 // ---------- DRAW ----------
-
-float yPos = 0;
 
 void draw(){
   background(0);
@@ -145,8 +142,9 @@ void draw(){
   } else {
     drawAndSimulate();
   }
-  animal.lookAround();
+  animal.update();
   spotlight.target(actor.getPosition());
+  
 }
 
 void drawAndSimulate(){
@@ -159,6 +157,12 @@ void drawAndSimulate(){
   drawAnimal();
   popMatrix();
   moveActor();
+
+  drawInfo();
+}
+
+void drawInfo(){
+  
 }
 
 void drawRoom(){
