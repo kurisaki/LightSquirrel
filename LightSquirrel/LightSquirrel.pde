@@ -71,7 +71,7 @@ void kinectSetup(){
 
 void serialSetup(){
   println(Serial.list());
-  myPort = new Serial(this, Serial.list()[3], 9600);
+  myPort = new Serial(this, Serial.list()[4], 9600);
   myPort.bufferUntil('\n');
 }
 
@@ -121,7 +121,7 @@ void setup(){
     kinectSetup();
     initializeDevices();
   }
-  
+  midiSetup();
   setupWorld();  
 }
 
@@ -226,12 +226,11 @@ void drawActor() {
     fill(200, 0, 200);
 
   PVector actorPos = get3dTo2d(actor.getPosition());
-  rect(actorPos.x, actorPos.y, actorWidth, actorHeight);
-  
+  rect(actorPos.x, actorPos.y, actorWidth, actorHeight);  
 }
 
 void moveActor() {
-    actor.setPosition(newActorPosition);
+  actor.setPosition(newActorPosition);
   PVector actorPos = get3dTo2d(actor.getPosition());
   PVector centerV = new PVector(centerX, centerY);
   actorPos.add(centerV);
@@ -266,7 +265,7 @@ PVector get3dTo2d(PVector vector3d) {
 
 void drawAnimal() {
   PVector pos = get3dTo2d(animal.getPosition());
-
+  updateSurround(pos);
   fill(255, 0, 0);
   ellipse(pos.x, pos.y, 100, 100);
 }
@@ -371,5 +370,22 @@ void onNewUser(int userID){
 void onLostUser(int userID){
   //TODO: kill in-game user
 }
+
+void updateSurround(PVector target){
+  //Determine angle and map to MIDI value
+  float maxRadius = 2000.0;
+  float soundAngle = atan2(-target.x, target.y);
+  text(degrees(soundAngle), 500,500);
+  if(soundAngle >= 0){
+    soundAngle = map(soundAngle, 0, PI, 0, 127/2);
+  } else if(soundAngle < 0){
+    soundAngle = map(soundAngle, -PI, 0, 127/2, 127);
+  }
+  //Determine diversity and map to MIDI value
+  float diversity = map(target.mag(), 0, maxRadius, 0, 127);
+
+  myBus.sendControllerChange(0,25,(int)diversity);
+  myBus.sendControllerChange(0,24,(int)soundAngle);
+  }
 
 
