@@ -43,9 +43,9 @@ void target(PVector target){
   }
   
   //Remember to calibrate servos!
-  int servo1 = (int)map(angleZY, 90,-90,600+150,2400+150);
+  int servo1 = (int)map(angleZY, 90,-90,600+90,2400+90);
   servo1 = constrain(servo1, 700,2100);
-  int servo2 = (int)map(angleXY, -90,90,600+150,2400+150);
+  int servo2 = (int)map(angleXY, -90,90,600+140,2400+140);
   servo2 = constrain(servo2, 700,2300);
 
   myPort.write("<setServo1," + servo1 + ">");

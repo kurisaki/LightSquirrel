@@ -30,7 +30,7 @@ String serial;
 
 //Environmental constants
 final PVector KINECT_ORIGO = new PVector(0,1400,-3000); //TO BE MEASURED
-final float KINECT_ANGLE = 0.862f + PI;
+final float KINECT_ANGLE = -0.862f;
 
 final int xSize = 1280;
 final int centerX = xSize * 10 / 2;
@@ -70,7 +70,7 @@ void kinectSetup(){
 
 void serialSetup(){
   println(Serial.list());
-  myPort = new Serial(this, Serial.list()[0], 9600);
+  myPort = new Serial(this, Serial.list()[4], 9600);
   myPort.bufferUntil('\n');
 }
 
@@ -119,9 +119,6 @@ void setup(){
     serialSetup();
     kinectSetup();
     initializeDevices();
-    //REMAP 
-    rotateY(KINECT_ANGLE);
-    translate(KINECT_ORIGO.x, -KINECT_ORIGO.y, -KINECT_ORIGO.z);
   }
   
   setupWorld();  
@@ -134,7 +131,7 @@ void draw(){
   kinectStuff();
   drawAndSimulate();
   animal.update();
-  spotlight.target(animal.getPosition());
+  //spotlight.target(animal.getPosition());
   
 }
 
@@ -266,7 +263,6 @@ void kinectStuff(){
     kinect.getCoM(userList[0], com);
     PVector transformed = transformCom(com);
     actor.setPosition(transformed);
-    //spotlight.target(animal.getPosition());
   }
 }
 
@@ -282,9 +278,17 @@ PVector rotateY(PVector vector, float angle){
   return new PVector(rotatedX, rotatedY, rotatedZ);
 }
 
+String getString(PVector vec){
+  return String.format("X: %.1f, Y: %.1f, Z: %.1f", vec.x, vec.y, vec.z);
+}
+
 PVector transformCom(PVector com){
-  PVector transformed = rotateY(com, KINECT_ANGLE);
-  transformed.add(new PVector(-3000, 2000, 0));
+  text(getString(com), 10, 100);
+  PVector transformed = com.get(); //rotateY(com, KINECT_ANGLE);
+  transformed.add(new PVector(0, 0, -3200));
+  transformed = rotateY(transformed, KINECT_ANGLE);
+  transformed.x = -transformed.x;
+  text(getString(transformed), 10, 120);
   return transformed;
 }
 
