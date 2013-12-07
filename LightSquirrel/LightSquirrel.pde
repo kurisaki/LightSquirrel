@@ -69,7 +69,7 @@ void kinectSetup(){
 
 void serialSetup(){
   println(Serial.list());
-  myPort = new Serial(this, Serial.list()[4], 9600);
+  myPort = new Serial(this, Serial.list()[0], 9600);
   myPort.bufferUntil('\n');
 }
 
