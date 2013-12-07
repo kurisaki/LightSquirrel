@@ -271,9 +271,15 @@ void kinectStuff(){
 }
 
 PVector rotateY(PVector vector, float angle){
-  PVector flipped = new PVector(vector.x, vector.z, 0);
-  flipped.rotate(angle);
-  return flipped;
+  PVector rotRowX = new PVector(cos(angle), 0, sin(angle));
+  PVector rotRowY = new PVector(0, 1, 0);
+  PVector rotRowZ = new PVector(-sin(angle), 0, cos(angle));
+
+  float rotatedX = vector.dot(rotRowX);
+  float rotatedY = vector.dot(rotRowY);
+  float rotatedZ = vector.dot(rotRowZ);
+
+  return new PVector(rotatedX, rotatedY, rotatedZ);
 }
 
 PVector transformCom(PVector com){
