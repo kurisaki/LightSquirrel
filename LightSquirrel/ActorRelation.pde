@@ -53,7 +53,7 @@ class ActorRelation{
 
 		float distance = reaction.mag();
 		if(distance < dangerRadius){
-			animal.setState(State.FLEEING);
+			animal.flee(actor.getPosition());
 		} else if(distance < safeRadius){
 
 			float x = distance - dangerRadius;

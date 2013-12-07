@@ -191,10 +191,12 @@ void drawRoom(){
   rect(0, roomDepth/2 + roomHeight/2, roomWidth, roomHeight);
 
   //Draw box
-  rect(box.getPosition().x, box.getPosition().z, 100, 100); //20x20cm box
+  rect(box.getPosition().x, box.getPosition().z, boxSize, boxSize);
 
   drawLights();
 }
+
+float boxSize = 100;
 
 void drawLights(){
   for (Light l : lights){
@@ -241,6 +243,8 @@ void moveActor() {
   } else {
     overActor = false;
   }
+
+
 }
 
 PVector get3dTo2d(PVector vector3d) {
@@ -339,6 +343,12 @@ void mouseDragged() {
 void mouseReleased() {
 
   locked = false;
+}
+
+void keyPressed(){
+  if(key == 'h'){
+    animal.flee(actor.getPosition());
+  }
 }
 
 

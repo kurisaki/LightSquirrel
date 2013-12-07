@@ -37,9 +37,15 @@ class Animal implements HasPosition {
 	float maxSpeed = 50;
 	float minSpeed = 1;
 
+	static final float FLEE_SPEED = 100;
+
 	float excitement = 5; //general level of excitement - connected to pulse and sound speed.
 
 	Light hidingPlace; //currently hiding 
+
+	static final int FLEE_COUNT = 30;
+	PVector fleeDirection;
+	int fleeCountdown = 0;
 
 	Room room;
 
@@ -71,6 +77,8 @@ class Animal implements HasPosition {
 		updateRelations();
 		updateMoveVector();
 
+		text("State: " + state, 500, 10);
+
 		if (energy < HIDE_THRESHOLD) {
 			hide();
 		} else if (energy < RUN_THRESHOLD) {
@@ -95,16 +103,28 @@ class Animal implements HasPosition {
 
 	void updateMoveVector() {
 		moveVector = new PVector(0, 0, 0);
-		for (ActorRelation relation : relationships){
-			PVector vector = relation.getReactionVector();
-			moveVector.add(vector);
+
+		switch (state){
+			case FLEEING:
+			moveVector.add(fleeDirection);
+			moveVector.mult(FLEE_SPEED);
+			fleeCountdown--;
+			if(fleeCountdown == 0)
+				state = State.ROAMING;
+			break;
+			case ROAMING:
+
+			for (ActorRelation relation : relationships){
+				PVector vector = relation.getReactionVector();
+				moveVector.add(vector);
+			}
+			moveVector.add(room.getBounceVector(position));
+			moveVector.add(getNoise());
+			break;
+
 		}
 
-		moveVector.add(room.getBounceVector(position));
 
-		moveVector.add(getNoise());
-
-		float maxSpeed = getMaxSpeed();
 		moveVector.limit(maxSpeed);
 	}
 
@@ -113,14 +133,13 @@ class Animal implements HasPosition {
 	//add or subtract energy based on movement
 	}
 
-	void flee() {
-
+	void flee(PVector scaryPos) {
+		state = State.FLEEING;
+		fleeCountdown = FLEE_COUNT;
+		fleeDirection = PVector.sub(position, scaryPos);
+		fleeDirection.normalize();
 	}
 	void hide() {
-	//TODO
-	}
-
-	void run() {
 	//TODO
 	}
 
@@ -161,9 +180,9 @@ class Animal implements HasPosition {
 		return noiseComponent;
 	}
 
-        List<ActorRelation> getRelationships(){
-          return relationships;
-        }
+	List<ActorRelation> getRelationships(){
+		return relationships;
+	}
 
 	@Override
 	public String toString() {
