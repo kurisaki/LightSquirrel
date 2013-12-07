@@ -79,10 +79,10 @@ class Animal implements HasPosition {
 			explore();
 		}
 		Wall currentWall = room.getWall(position);
+		position.add(moveVector);
 		if(currentWall != Wall.NONE){
 			position = room.projectOnWall(position, currentWall);
 		}
-		position.add(moveVector);
 	//TODO: make sound
 	}																																												
 
