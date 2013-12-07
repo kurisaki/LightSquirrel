@@ -89,7 +89,7 @@ class Animal implements HasPosition {
 	void updateRelations() {
 		for (ActorRelation relation : relationships){
 			relation.updateAttitude();
-			relation.updateInterest();
+			//relation.updateInterest();
 		}
 	}
 

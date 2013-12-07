@@ -1,10 +1,8 @@
 class ActorRelation{
 
 	//CONSTANTS
-	static final int MIN_ATTITUDE = -10;
+	static final int MIN_ATTITUDE = -100;
 	static final int MAX_ATTITUDE = 10;
-	static final int MIN_INTEREST = -10;
-	static final int MAX_INTEREST = 10;
 
 	static final int MAX_FACTOR = 10;
 	static final int MIN_FACTOR = 1;
@@ -12,8 +10,8 @@ class ActorRelation{
 	static final int DANGER_MIN = 300;
 	static final int DANGER_MAX = 1000;
 
-	static final int SAFE_MIN = 400;
-	static final int SAFE_MAX = 2000;
+	static final int INTEREST_MIN = 2000;
+	static final int INTEREST_MAX = 2000;
 
 	//FIELDS
 	Actor actor;
@@ -29,16 +27,16 @@ class ActorRelation{
 		interest = 0;
 	}
 
-	float getSafeRadius(){
-		return (SAFE_MIN-SAFE_MAX) * getNormalizedAttitude() + SAFE_MAX;
+	float getInterestRadius(){
+		return (INTEREST_MIN-INTEREST_MAX) * getNormalizedAttitude() + INTEREST_MAX;
 	}
 
 	float getDangerRadius(){
-		return (DANGER_MIN-DANGER_MAX)*getNormalizedAttitude() + DANGER_MAX;
+		return (DANGER_MIN-DANGER_MAX) * getNormalizedAttitude() + DANGER_MAX;
 	}
 
 	float getNormalizedAttitude(){
-		float normalizedAttitude = (attitude + 10f ) / 20f;
+		float normalizedAttitude = (attitude - MIN_ATTITUDE ) / (float) (MAX_ATTITUDE - MIN_ATTITUDE);
 		return normalizedAttitude;
 	}
 
@@ -50,9 +48,8 @@ class ActorRelation{
 		reaction.sub(projectedOnFloor);
 
 		//React according to attitude
-
 		float dangerRadius = getDangerRadius();
-		float safeRadius = getSafeRadius();
+		float safeRadius = getInterestRadius();
 
 		float distance = reaction.mag();
 		if(distance < dangerRadius){
@@ -61,8 +58,6 @@ class ActorRelation{
 
 			float x = distance - dangerRadius;
 			float safeZone = safeRadius - dangerRadius;
-
-
 			float speedFactor = (1 - x / safeZone);
 
 			if(attitude > 0)
@@ -75,44 +70,41 @@ class ActorRelation{
 			reaction.setMag(0);
 		}
 
-		reaction.mult(attitude);
+		reaction.mult(-attitude);
 
 		return reaction;
 	}
 
 	void updateAttitude(){
 		//TESTING
-		attitude = 5;
 
-		if(false){
+		if(true){
 		//END TESTING
 
 
-		final float SPEED_THRESHOLD = 10;
-		final float ACCELERATION_THRESHOLD = 10;
+			final float SPEED_THRESHOLD = 100;
+			final float ACCELERATION_THRESHOLD = 100;
 
-		float speed = actor.getSpeed();
-		float acceleration = actor.getAcceleration();
+			float speed = actor.getSpeed();
+			float acceleration = actor.getAcceleration();
 
 		//Update attitude based on speed and acceleration of actor
 		//TODO: Make more complex implementation, e.g. startle
-		if(speed > SPEED_THRESHOLD || acceleration > ACCELERATION_THRESHOLD){
-			if(attitude > MIN_ATTITUDE){
-				attitude--;
+			if(speed > SPEED_THRESHOLD || acceleration > ACCELERATION_THRESHOLD){
+				if(attitude > MIN_ATTITUDE){
+					attitude--;
+				}
+			} else {
+				if(attitude < MAX_ATTITUDE){				
+					attitude++;
+				}
 			}
-		} else {
-			if(attitude < MAX_ATTITUDE){				
-				attitude++;
-			}
+
 		}
 
-		}
+		text("Attitude: " + attitude, 10, 70);
 	}
 
-Actor getActor(){return actor;}
-
-	void updateInterest(){
-		//TOOD
-	}
+	Actor getActor(){return actor;}
 
 }

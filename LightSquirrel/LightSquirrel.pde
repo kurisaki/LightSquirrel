@@ -23,7 +23,7 @@ MidiBus myBus;
 //Serial stuff
 final int BYTE_MIN = 0;
 final int BYTE_MAX = 1;
-final boolean FAKE = false;
+final boolean FAKE = true;
 Serial myPort;
 
 String serial;
@@ -44,7 +44,8 @@ Spotlight spotlight;
 SimpleOpenNI  kinect;
 
 PVector com = new PVector();                                   
-PVector com2d = new PVector(); 
+PVector com2d = new PVector();
+PVector newActorPosition = new PVector();
 
 //Simulator stuff
 boolean overActor = false;
@@ -128,7 +129,10 @@ void setup(){
 
 void draw(){
   background(0);
-  kinectStuff();
+
+  if(!FAKE)
+    kinectStuff();
+
   drawAndSimulate();
   animal.update();
   //spotlight.target(animal.getPosition());
@@ -155,9 +159,9 @@ void drawRelations(){
     PVector actorPos = get3dTo2d(relation.getActor().getPosition());
     fill(100, 50, 0);
     ellipseMode(RADIUS);
-    ellipse(actorPos.x, actorPos.y, relation.getDangerRadius(), relation.getDangerRadius());
+    ellipse(actorPos.x, actorPos.y, relation.getInterestRadius(), relation.getInterestRadius());
     fill(50, 100, 0);
-    ellipse(actorPos.x, actorPos.y, relation.getSafeRadius(), relation.getSafeRadius());
+    ellipse(actorPos.x, actorPos.y, relation.getDangerRadius(), relation.getDangerRadius());
   } 
 }
 
@@ -225,6 +229,7 @@ void drawActor() {
 }
 
 void moveActor() {
+    actor.setPosition(newActorPosition);
   PVector actorPos = get3dTo2d(actor.getPosition());
   PVector centerV = new PVector(centerX, centerY);
   actorPos.add(centerV);
@@ -327,7 +332,7 @@ void mouseDragged() {
     oldPos.x = newX;
     oldPos.z = newY;
     oldPos = room.limitToFloor(oldPos);
-    actor.setPosition(oldPos);
+    newActorPosition = oldPos;
   }
 }
 

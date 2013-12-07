@@ -3,6 +3,8 @@ class Actor implements HasPosition{
   PVector position;
   float acceleration;
   float speed;
+  float maxAccel;
+  float maxSpeed;
   int userID;
 
   int sampleLength = 6; //number of frames to average
@@ -36,10 +38,10 @@ class Actor implements HasPosition{
     position = p;
     position.y = 0;
     positions.add(position.get());
-    int lastPosition = positions.size()-1;
-    if(lastPosition >1){
+    if(positions.size() > sampleLength){
+      positions.removeFirst();
       //Calculate velocity (distance traveled in the last 1/30 second) and store in list
-      PVector velocity = PVector.sub(positions.get(lastPosition), positions.get(lastPosition-1));
+      PVector velocity = PVector.sub(positions.get(sampleLength-1), positions.get(sampleLength-2));
       velocities.add(velocity);
 
       //Calculate speed (magnitude of velocity) and store
@@ -51,14 +53,15 @@ class Actor implements HasPosition{
         for (Float s : speeds){
           speedSum += s;
         }
-        avgSpeed = (speedSum/sampleLength);
-        text(avgSpeed, 40, 40);
-      }
+        avgSpeed = (speedSum / sampleLength);
+        text("Speed: " + avgSpeed, 10, 40);
+        maxSpeed = max(avgSpeed, maxSpeed);
+        text("Max speed: " + maxSpeed, 10, 50);
 
-      int lastSpeed = speeds.size()-1;
-      if(lastSpeed >1){
         //Calculate acceleration (change in speed over the last 1/30 second) and store
-        acceleration = speeds.get(lastSpeed)/speeds.get(lastSpeed-1);
+        float lastSpeed = speeds.get(sampleLength-1);
+        float prevSpeed = speeds.get(sampleLength-2);
+        acceleration = prevSpeed > 0 ? lastSpeed / prevSpeed : 0;
         accelerations.add(acceleration);
         if(accelerations.size() > sampleLength){
           float accelSum = 0.0;
@@ -66,9 +69,11 @@ class Actor implements HasPosition{
           for (Float a : accelerations){
             accelSum += a;
           }
-        avgAccel = (accelSum/sampleLength);
-        text(avgAccel, 40, 80);
-      }
+          avgAccel = (accelSum / sampleLength);
+          text("Acceleration: " + avgAccel, 10, 80);
+          maxAccel = max(avgAccel, maxAccel);
+          text("Max acc.: " + maxAccel, 10, 90);
+        }
 
       }
     }
