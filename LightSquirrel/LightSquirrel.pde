@@ -23,7 +23,7 @@ MidiBus myBus;
 //Serial stuff
 final int BYTE_MIN = 0;
 final int BYTE_MAX = 1;
-final boolean FAKE = true;
+final boolean FAKE = false;
 Serial myPort;
 
 String serial;
@@ -116,10 +116,10 @@ void setup(){
     
   if (!FAKE) {
     serialSetup();
-    kinectSetup();
+    //kinectSetup();
     initializeDevices();
     //REMAP 
-    translate(KINECT_ORIGO.x, -KINECT_ORIGO.y, -KINECT_ORIGO.z);
+    //translate(KINECT_ORIGO.x, -KINECT_ORIGO.y, -KINECT_ORIGO.z);
   }
   
   setupWorld();  
@@ -129,12 +129,8 @@ void setup(){
 
 void draw(){
   background(0);
-
-  if(!FAKE) {
-    kinectStuff();
-  } else {
-    drawAndSimulate();
-  }
+  
+  drawAndSimulate();
   animal.update();
   spotlight.target(actor.getPosition());
   
@@ -266,7 +262,7 @@ void kinectStuff(){
   println(userList.length);
   if (userList.length >= 1){
     kinect.getCoM(userList[0],com);
-    spotlight.target(com);
+    spotlight.target(animal.getPosition());
   }
 }
 
