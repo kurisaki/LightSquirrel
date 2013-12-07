@@ -134,7 +134,7 @@ void draw(){
   
   drawAndSimulate();
   animal.update();
-  spotlight.target(actor.getPosition());
+  spotlight.target(animal.getPosition());
   
 }
 
