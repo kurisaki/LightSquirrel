@@ -34,7 +34,7 @@ class ActorRelation{
 	}
 
 	float getDangerRadius(){
-		return (SAFE_MIN-SAFE_MAX)*getNormalizedAttitude() + SAFE_MAX;
+		return (DANGER_MIN-DANGER_MAX)*getNormalizedAttitude() + DANGER_MAX;
 	}
 
 	float getNormalizedAttitude(){
