@@ -139,6 +139,14 @@ class Animal implements HasPosition {
 		return position;
 	}
 
+	void setState(State aState){
+		state = aState;
+	}
+
+	State getState(){
+		return state;
+	}
+
 	private PVector getNoise(){
 		PVector noiseComponent = new PVector(0,0,0);
 		noiseComponent.x = map(noise(t), 0,1,-1,1);

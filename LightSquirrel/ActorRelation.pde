@@ -6,13 +6,20 @@ class ActorRelation{
 	static final int MIN_INTEREST = -10;
 	static final int MAX_INTEREST = 10;
 
+	static final int MAX_FACTOR = 10;
+	static final int MIN_FACTOR = 1;
+
+	static final int DANGER_MIN = 300;
+	static final int DANGER_MAX = 1000;
+
+	static final int SAFE_MIN = 400;
+	static final int SAFE_MAX = 2000;
+
 	//FIELDS
 	Actor actor;
 	Animal animal;
 	int attitude;
 	int interest;
-	int dangerRadius;
-	int safeRadius;
 
 	//CONSTRUCTOR
 	public ActorRelation(Actor anActor, Animal anAnimal){
@@ -20,8 +27,19 @@ class ActorRelation{
 		animal = anAnimal;
 		attitude = 0;
 		interest = 0;
-		dangerRadius = 750;
-		safeRadius = 1500;
+	}
+
+	float getSafeRadius(){
+		return (SAFE_MIN-SAFE_MAX) * getNormalizedAttitude() + SAFE_MAX;
+	}
+
+	float getDangerRadius(){
+		return (SAFE_MIN-SAFE_MAX)*getNormalizedAttitude() + SAFE_MAX;
+	}
+
+	float getNormalizedAttitude(){
+		float normalizedAttitude = (attitude + 10f ) / 20f;
+		return normalizedAttitude;
 	}
 
 	PVector getReactionVector(){
@@ -32,13 +50,41 @@ class ActorRelation{
 		reaction.sub(projectedOnFloor);
 
 		//React according to attitude
-		reaction.normalize();
-		reaction.mult(10 * attitude);
+
+		float dangerRadius = getDangerRadius();
+		float safeRadius = getSafeRadius();
+
+		float distance = reaction.mag();
+		if(distance < dangerRadius){
+			animal.setState(State.FLEEING);
+		} else if(distance < safeRadius){
+
+			float x = distance - dangerRadius;
+			float safeZone = safeRadius - dangerRadius;
+
+
+			float speedFactor = (1 - x / safeZone);
+
+			if(attitude > 0)
+			{
+				speedFactor = (0.9 - speedFactor);
+			}
+
+			reaction.setMag(speedFactor);
+		} 
+		reaction.mult(attitude);
 
 		return reaction;
 	}
 
 	void updateAttitude(){
+		//TESTING
+		attitude = 5;
+
+		if(false){
+		//END TESTING
+
+
 		final float SPEED_THRESHOLD = 10;
 		final float ACCELERATION_THRESHOLD = 10;
 
@@ -55,6 +101,8 @@ class ActorRelation{
 			if(attitude < MAX_ATTITUDE){				
 				attitude++;
 			}
+		}
+
 		}
 	}
 
