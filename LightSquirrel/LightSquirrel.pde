@@ -268,8 +268,6 @@ void kinectStuff(){
 
 // -------------- MOUSE ---------------
 void mousePressed() {
-  if(!FAKE) return;
-
   if(overActor) { 
     locked = true; 
   } else {
@@ -286,7 +284,6 @@ void mousePressed() {
 }
 
 void mouseDragged() {
-  if(!FAKE) return;
 
   if(locked) {
     float newX = mouseX*10 - xOffset; 
@@ -300,7 +297,6 @@ void mouseDragged() {
 }
 
 void mouseReleased() {
-  if(!FAKE) return;
 
   locked = false;
 }
