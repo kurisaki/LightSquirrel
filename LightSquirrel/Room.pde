@@ -13,7 +13,6 @@ class Room {
 	  yHeight = y;
 	}
 
-
 	//METHODS
   int getWidth(){ return xWidth; }
   int getDepth(){ return zDepth; }
@@ -24,20 +23,66 @@ class Room {
   PVector getBounceVector(PVector vector){
   	PVector bounce = new PVector();
   	float bounceFactor = 1;
-  	//Assuming origo is in the middle of the room
-  	int halfZ = zDepth / 2;
-  	if (vector.z > halfZ - BOUNCE_THRESHOLD){
-  		// Near "top" wall
-  		bounce.z -= bounceFactor * (BOUNCE_THRESHOLD - (halfZ - vector.z));
-  	} else if(vector.z < -halfZ + BOUNCE_THRESHOLD){
-  		// Near "bottom" wall
-  		bounce.z += bounceFactor * (BOUNCE_THRESHOLD -(vector.z - halfZ));
-  	}
-
-  	if (vector.y > yHeight - BOUNCE_THRESHOLD){
-  		// Near ceiling
-  		bounce.y -= bounceFactor * (BOUNCE_THRESHOLD - (yHeight - vector.y));
-  	}
-  	return bounce;
+  	
+    float distanceToCeiling = yHeight - vector.y;
+    if(distanceToCeiling < BOUNCE_THRESHOLD){
+      bounce.y = -(BOUNCE_THRESHOLD - distanceToCeiling) * bounceFactor;
+    }
+    return bounce;
   }
+
+  Wall getWall(PVector vector3d){
+    int halfX = xWidth / 2;
+    int halfZ = zDepth / 2;
+    if(vector3d.x >= halfX)
+      return Wall.EAST;
+    if(vector3d.x <= -halfX)
+      return Wall.WEST;
+    if(vector3d.z >= halfZ)
+      return Wall.SOUTH;
+    if(vector3d.z <= -halfZ)
+      return Wall.NORTH;
+    return Wall.NONE;
+  }
+
+  PVector projectOnWall(PVector vector3d){
+    int halfX = xWidth / 2;
+    int halfZ = zDepth / 2;
+    PVector projected = vector3d.get();
+    Wall wall = getWall(vector3d);
+    switch (wall){
+      case NORTH:
+        projected.y += -vector3d.z - halfZ;
+        projected.z = -halfZ;
+        projected.x = constrain(projected.x, -halfX, halfX);
+        break;
+      case SOUTH:
+        projected.y += vector3d.z - halfZ;
+        projected.z = halfZ;
+        projected.x = constrain(projected.x, -halfX, halfX);
+        break;
+      case EAST:
+        projected.y += vector3d.x - halfX;
+        projected.x = halfX;
+        projected.z = constrain(projected.z, -halfZ, halfZ);
+        break;
+      case WEST:
+        projected.y += -vector3d.x - halfX;
+        projected.x = -halfX;
+        projected.z = constrain(projected.z, -halfZ, halfZ);
+        break;
+    }
+    return projected;
+  }
+
+  PVector limitToFloor(PVector vector3d){
+    int halfX = xWidth / 2;
+    int halfZ = zDepth /2;
+    int margin = 100;
+    PVector limited = vector3d.get();
+    limited.x = constrain(limited.x, -halfX + margin, halfX - margin);
+    limited.z = constrain(limited.z, -halfZ + margin, halfZ - margin);
+    return limited;
+  }
+
 }

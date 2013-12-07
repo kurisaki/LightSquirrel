@@ -31,9 +31,9 @@ String serial;
 //Environmental constants
 final PVector KINECT_ORIGO = new PVector(0,1400,-3000); //TO BE MEASURED
 
-final int xSize = 1024;
+final int xSize = 1280;
 final int centerX = xSize * 10 / 2;
-final int ySize = 768;
+final int ySize = 860;
 final int centerY = ySize * 10 / 2;
 
 
@@ -95,7 +95,7 @@ Actor actor;
 Animal animal;
 
 void setupWorld(){
-  room = new Room(5000, 5000, 2400); //Room is 5 x 5 x 2.4 meters
+  room = new Room(4200, 3600, 2000);
   box = new Box();
   lights = new Light[]{
     new Light(new PVector(1000, 1000, 0)),
@@ -112,7 +112,7 @@ void setup(){
   frameRate(30);
   background(0);
   
-  spotlight = new Spotlight(2400);
+  spotlight = new Spotlight(2700);
     
   if (!FAKE) {
     serialSetup();
@@ -129,12 +129,6 @@ void setup(){
 
 void draw(){
   background(0);
-  fill(0);
-  stroke(255);
-  strokeWeight(10);
-  textSize(12);
-  fill(255);
-  text(frameRate, 10,10);
 
   if(!FAKE) {
     kinectStuff();
@@ -162,6 +156,13 @@ void drawAndSimulate(){
 
 void drawInfo(){
   
+  fill(255);
+  stroke(255);
+  strokeWeight(10);
+  textSize(12);
+  text(frameRate, 10,10);
+
+  text(animal.toString(), 10, 750);
 }
 
 void drawRoom(){
@@ -175,10 +176,16 @@ void drawRoom(){
   rect(0, 0, roomWidth, roomDepth);
   rect(- roomWidth/2 - roomHeight/2, 0, roomHeight, roomDepth);
   rect(roomWidth/2 + roomHeight/2, 0, roomHeight, roomDepth);
+  rect(0, - roomDepth/2 - roomHeight/2, roomWidth, roomHeight);
+  rect(0, roomDepth/2 + roomHeight/2, roomWidth, roomHeight);
 
   //Draw box
   rect(box.getPosition().x, box.getPosition().z, 100, 100); //20x20cm box
 
+  drawLights();
+}
+
+void drawLights(){
   for (Light l : lights){
     switch (l.getState()){
       case 2:
@@ -194,8 +201,8 @@ void drawRoom(){
 }
 
 
-  float actorWidth = 300;
-  float actorHeight = 300;
+float actorWidth = 300;
+float actorHeight = 300;
 
 void drawActor() {
   fill(0, 200, 200);
@@ -219,16 +226,19 @@ void moveActor() {
 }
 
 PVector get3dTo2d(PVector vector3d) {
-  boolean isOnLeftWall = vector3d.x == room.getWidth() / 2;
-  boolean isOnRightWall = vector3d.x == room.getWidth() / -2;
+  Wall wall = room.getWall(vector3d);
 
-
-  if(isOnLeftWall){
-    return new PVector(-room.getWidth()/2 - vector3d.y, vector3d.z);
-  } else if(isOnRightWall){
-    return new PVector(room.getWidth()/2 + vector3d.y, vector3d.z);
-  } else {
-    return new PVector(vector3d.x, vector3d.z);
+  switch (wall){
+    case NORTH:
+      return new PVector(vector3d.x, -room.getDepth()/2 - vector3d.y);
+    case SOUTH:
+      return new PVector(vector3d.x, room.getDepth()/2 + vector3d.y);
+    case EAST:
+      return new PVector(room.getWidth()/2 + vector3d.y, vector3d.z);
+    case WEST:
+      return new PVector(-room.getWidth()/2 - vector3d.y, vector3d.z);
+    default:
+      return new PVector(vector3d.x, vector3d.z);
   }
 }
 
@@ -283,6 +293,7 @@ void mouseDragged() {
     PVector oldPos = actor.getPosition();
     oldPos.x = newX;
     oldPos.z = newY;
+    oldPos = room.limitToFloor(oldPos);
     actor.setPosition(oldPos);
   }
 }

@@ -44,111 +44,115 @@ class Animal implements HasPosition {
 	Room room;
 
 //CONSTRUCTOR
-public Animal(PVector initialPosition, Room aRoom){
-	position = initialPosition;
-	state = State.HIDING;
-	relationships = new ArrayList<ActorRelation>();
-	lightsThatIKnow = new ArrayList<Light>();
-	this.room = aRoom;
-}
+	public Animal(PVector initialPosition, Room aRoom){
+		position = initialPosition;
+		state = State.HIDING;
+		relationships = new ArrayList<ActorRelation>();
+		lightsThatIKnow = new ArrayList<Light>();
+		this.room = aRoom;
+	}
 
 
 	//METHODS
-public void createRelationship(Actor actor) {
-	relationships.add(new ActorRelation(actor, this));
+	public void createRelationship(Actor actor) {
+		relationships.add(new ActorRelation(actor, this));
 	//create a new relationship and add it to the list
-}
-
-public void killRelationship() {
-	//TODO: remove relationship from list
-}
-
-public void discoverLight(Light aLight) {
-	lightsThatIKnow.add(aLight);
-}
-
-public void update() {
-	updateRelations();
-	updateMoveVector();
-
-if (energy < HIDE_THRESHOLD) {
-		hide();
-	} else if (energy < RUN_THRESHOLD) {
-		run();
-	} else {
-		explore();
 	}
 
-	position.add(moveVector);
+	public void killRelationship() {
+	//TODO: remove relationship from list
+	}
 
+	public void discoverLight(Light aLight) {
+		lightsThatIKnow.add(aLight);
+	}
+
+	public void update() {
+		updateRelations();
+		updateMoveVector();
+
+		if (energy < HIDE_THRESHOLD) {
+			hide();
+		} else if (energy < RUN_THRESHOLD) {
+			run();
+		} else {
+			explore();
+		}
+
+		position.add(moveVector);
+		position = room.projectOnWall(position);
 	//TODO: make sound
 	}																																												
 
-void updateRelations() {
-	for (ActorRelation relation : relationships){
-		relation.updateAttitude();
-		relation.updateInterest();
-	}
-}
-
-void updateMoveVector() {
-	moveVector = new PVector(0, 0, 0);
-	for (ActorRelation relation : relationships){
-		PVector vector = relation.getReactionVector();
-		moveVector.add(vector);
+	void updateRelations() {
+		for (ActorRelation relation : relationships){
+			relation.updateAttitude();
+			relation.updateInterest();
+		}
 	}
 
-	moveVector.add(room.getBounceVector(position));
+	void updateMoveVector() {
+		moveVector = new PVector(0, 0, 0);
+		for (ActorRelation relation : relationships){
+			PVector vector = relation.getReactionVector();
+			moveVector.add(vector);
+		}
 
-	moveVector.add(getNoise());
+		moveVector.add(room.getBounceVector(position));
 
-	float maxSpeed = getMaxSpeed();
-	moveVector.limit(maxSpeed);
-}
+		moveVector.add(getNoise());
 
-void updateEnergy(){
+		float maxSpeed = getMaxSpeed();
+		moveVector.limit(maxSpeed);
+	}
+
+	void updateEnergy(){
 	//TODO: refresh energy, more if resting.
 	//add or subtract energy based on movement
-}
+	}
 
-void flee() {
+	void flee() {
 
-}
-void hide() {
+	}
+	void hide() {
 	//TODO
-}
+	}
 
-void run() {
+	void run() {
 	//TODO
-}
+	}
 
-void explore() {
+	void explore() {
 
-}
+	}
 
-float getMaxSpeed(){
+	float getMaxSpeed(){
 		//TODO: calculate based on energy
-	return maxSpeed;
-}
+		return maxSpeed;
+	}
 
-float getMinSpeed(){
-	return minSpeed;
-}
+	float getMinSpeed(){
+		return minSpeed;
+	}
 
-public PVector getPosition() {
-	return position;
-}
+	public PVector getPosition() {
+		return position;
+	}
 
-private PVector getNoise(){
-	PVector noiseComponent = new PVector(0,0,0);
-        noiseComponent.x = map(noise(t), 0,1,-1,1);
-        noiseComponent.y = map(noise(t+10000), 0,1,-1,1);
-        noiseComponent.z = map(noise(t+20000), 0,1,-1,1);
-	noiseComponent.setMag(noiseFactor);
+	private PVector getNoise(){
+		PVector noiseComponent = new PVector(0,0,0);
+		noiseComponent.x = map(noise(t), 0,1,-1,1);
+		//noiseComponent.y = map(noise(t+10000), 0,1,-1,1);
+		noiseComponent.z = map(noise(t+20000), 0,1,-1,1);
+		noiseComponent.setMag(noiseFactor);
 
-	t += NOISE_ROUGHNESS;
+		t += NOISE_ROUGHNESS;
 
-	return noiseComponent;
-}
+		return noiseComponent;
+	}
 
+	@Override
+	public String toString() {
+		return String.format("x: %f, z: %f, y: %f", position.x, position.z, position.y);
+	}
 }

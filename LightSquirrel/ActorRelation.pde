@@ -28,7 +28,8 @@ class ActorRelation{
 		//Copy animal position
 		PVector reaction = animal.getPosition().get();
 		//Get direction to actor
-		reaction.sub(actor.getPosition());
+		PVector projectedOnFloor = projectOnFloor(actor.getPosition());
+		reaction.sub(projectedOnFloor);
 
 		//React according to attitude
 		reaction.normalize();
