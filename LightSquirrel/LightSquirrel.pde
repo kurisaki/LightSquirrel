@@ -30,7 +30,7 @@ String serial;
 
 //Environmental constants
 final PVector KINECT_ORIGO = new PVector(0,1400,-3000); //TO BE MEASURED
-final float KINECT_ANGLE = 0.862f;
+final float KINECT_ANGLE = 0.862f + PI;
 
 final int xSize = 1280;
 final int centerX = xSize * 10 / 2;
@@ -264,9 +264,22 @@ void kinectStuff(){
   println(userList.length);
   if (userList.length >= 1){
     kinect.getCoM(userList[0], com);
+    PVector transformed = transformCom(com);
     actor.setPosition(com);
     spotlight.target(animal.getPosition());
   }
+}
+
+PVector rotateY(PVector vector, float angle){
+  PVector flipped = new PVector(vector.x, vector.z, 0);
+  flipped.rotate(angle);
+  return flipped;
+}
+
+PVector transformCom(PVector com){
+  PVector transformed = rotateY(com, KINECT_ANGLE);
+  transformed.add(new PVector(-3000, 2000, 0));
+  return transformed;
 }
 
 // -------------- MOUSE ---------------
