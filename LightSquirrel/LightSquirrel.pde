@@ -117,7 +117,7 @@ void setup(){
     
   if (!FAKE) {
     serialSetup();
-    //kinectSetup();
+    kinectSetup();
     initializeDevices();
     //REMAP 
     rotateY(KINECT_ANGLE);
@@ -131,7 +131,7 @@ void setup(){
 
 void draw(){
   background(0);
-  
+  kinectStuff();
   drawAndSimulate();
   animal.update();
   spotlight.target(animal.getPosition());
@@ -258,15 +258,15 @@ void drawAnimal() {
 void kinectStuff(){
   kinect.update();
   //Draw user cam for debugging
-  image(kinect.userImage(),0,0);
+  //image(kinect.userImage(),0,0);
   
   int[] userList = kinect.getUsers();
   println(userList.length);
   if (userList.length >= 1){
     kinect.getCoM(userList[0], com);
     PVector transformed = transformCom(com);
-    actor.setPosition(com);
-    spotlight.target(animal.getPosition());
+    actor.setPosition(transformed);
+    //spotlight.target(animal.getPosition());
   }
 }
 
