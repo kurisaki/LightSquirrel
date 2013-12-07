@@ -103,7 +103,7 @@ void setupWorld(){
     new Light(new PVector(2500, 1200, -1200)),
   };
 
-  actor = new Actor(new PVector(0, 1000, -1500));
+  actor = new Actor(new PVector(0, 0, -1500));
   animal = new Animal(new PVector(0, 0, 0), room);
   animal.createRelationship(actor);
 }
@@ -263,7 +263,8 @@ void kinectStuff(){
   int[] userList = kinect.getUsers();
   println(userList.length);
   if (userList.length >= 1){
-    kinect.getCoM(userList[0],com);
+    kinect.getCoM(userList[0], com);
+    actor.setPosition(com);
     spotlight.target(animal.getPosition());
   }
 }
@@ -279,10 +280,6 @@ void mousePressed() {
   PVector pos = get3dTo2d(actor.getPosition());
   xOffset = mouseX*10 -pos.x; 
   yOffset = mouseY*10 -pos.y; 
-
-  println("mouseX: "+mouseX);
-  println("mouseY: "+mouseY);
-  println("locked: "+locked);
 }
 
 void mouseDragged() {

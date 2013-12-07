@@ -34,7 +34,8 @@ class Actor implements HasPosition{
 
     //Update position and store in list
     position = p;
-    positions.add(new PVector(p.x, p.y, p.z));
+    position.y = 0;
+    positions.add(position.get());
     int lastPosition = positions.size()-1;
     if(lastPosition >1){
       //Calculate velocity (distance traveled in the last 1/30 second) and store in list
@@ -51,7 +52,7 @@ class Actor implements HasPosition{
           speedSum += s;
         }
         avgSpeed = (speedSum/sampleLength);
-        text(avgSpeed,40,40);
+        text(avgSpeed, 40, 40);
       }
 
       int lastSpeed = speeds.size()-1;
@@ -66,7 +67,7 @@ class Actor implements HasPosition{
             accelSum += a;
           }
         avgAccel = (accelSum/sampleLength);
-        text(avgAccel,40,80);
+        text(avgAccel, 40, 80);
       }
 
       }
