@@ -45,31 +45,46 @@ class Room {
     return Wall.NONE;
   }
 
-  PVector projectOnWall(PVector vector3d){
+  PVector projectOnWall(PVector vector3d, Wall wall){
     int halfX = xWidth / 2;
     int halfZ = zDepth / 2;
     PVector projected = vector3d.get();
-    Wall wall = getWall(vector3d);
     switch (wall){
       case NORTH:
         projected.y += -vector3d.z - halfZ;
         projected.z = -halfZ;
         projected.x = constrain(projected.x, -halfX, halfX);
+        if(projected.y < 0) {
+          projected.z -= projected.y;
+          projected.y = 0;
+        }
         break;
       case SOUTH:
         projected.y += vector3d.z - halfZ;
         projected.z = halfZ;
         projected.x = constrain(projected.x, -halfX, halfX);
+        if(projected.y < 0) {
+          projected.z += projected.y;
+          projected.y = 0;
+        }
         break;
       case EAST:
         projected.y += vector3d.x - halfX;
         projected.x = halfX;
         projected.z = constrain(projected.z, -halfZ, halfZ);
+        if(projected.y < 0) {
+          projected.x += projected.y;
+          projected.y = 0;
+        }
         break;
       case WEST:
         projected.y += -vector3d.x - halfX;
         projected.x = -halfX;
         projected.z = constrain(projected.z, -halfZ, halfZ);
+        if(projected.y < 0) {
+          projected.x -= projected.y;
+          projected.y = 0;
+        }
         break;
     }
     return projected;
