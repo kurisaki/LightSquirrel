@@ -30,6 +30,7 @@ String serial;
 
 //Environmental constants
 final PVector KINECT_ORIGO = new PVector(0,1400,-3000); //TO BE MEASURED
+final float KINECT_ANGLE = 0.862f;
 
 final int xSize = 1280;
 final int centerX = xSize * 10 / 2;
@@ -108,7 +109,7 @@ void setupWorld(){
 }
 
 void setup(){
-  size(xSize,ySize);
+  size(xSize,ySize,P3D);
   frameRate(30);
   background(0);
   
@@ -119,7 +120,8 @@ void setup(){
     //kinectSetup();
     initializeDevices();
     //REMAP 
-    //translate(KINECT_ORIGO.x, -KINECT_ORIGO.y, -KINECT_ORIGO.z);
+    rotateY(KINECT_ANGLE);
+    translate(KINECT_ORIGO.x, -KINECT_ORIGO.y, -KINECT_ORIGO.z);
   }
   
   setupWorld();  
