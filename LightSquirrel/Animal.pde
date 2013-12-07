@@ -159,6 +159,10 @@ class Animal implements HasPosition {
 		return noiseComponent;
 	}
 
+        List<ActorRelation> getRelationships(){
+          return relationships;
+        }
+
 	@Override
 	public String toString() {
 		return String.format("x: %f, z: %f, y: %f", position.x, position.z, position.y);

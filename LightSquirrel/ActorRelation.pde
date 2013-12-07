@@ -109,6 +109,8 @@ class ActorRelation{
 		}
 	}
 
+Actor getActor(){return actor;}
+
 	void updateInterest(){
 		//TOOD
 	}

@@ -70,7 +70,7 @@ void kinectSetup(){
 
 void serialSetup(){
   println(Serial.list());
-  myPort = new Serial(this, Serial.list()[4], 9600);
+  myPort = new Serial(this, Serial.list()[0], 9600);
   myPort.bufferUntil('\n');
 }
 
@@ -142,11 +142,21 @@ void drawAndSimulate(){
   translate(centerX, centerY);
   drawRoom();
   drawActor();
+  drawRelations();
   drawAnimal();
   popMatrix();
   moveActor();
 
   drawInfo();
+}
+
+void drawRelations(){
+  for(ActorRelation relation : animal.getRelationships()){
+    PVector actorPos = get3dTo2d(relation.getActor().getPosition());
+    ellipseMode(RADIUS);
+    ellipse(actorPos.x, actorPos.y, relation.getSafeRadius(), relation.getSafeRadius());
+    ellipse(actorPos.x, actorPos.y, relation.getDangerRadius(), relation.getDangerRadius());
+  } 
 }
 
 void drawInfo(){
@@ -209,6 +219,7 @@ void drawActor() {
 
   PVector actorPos = get3dTo2d(actor.getPosition());
   rect(actorPos.x, actorPos.y, actorWidth, actorHeight);
+  
 }
 
 void moveActor() {
