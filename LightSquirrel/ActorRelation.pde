@@ -71,7 +71,10 @@ class ActorRelation{
 			}
 
 			reaction.setMag(speedFactor);
-		} 
+		} else {
+			reaction.setMag(0);
+		}
+
 		reaction.mult(attitude);
 
 		return reaction;
