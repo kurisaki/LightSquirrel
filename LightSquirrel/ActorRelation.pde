@@ -20,8 +20,8 @@ class ActorRelation{
 		animal = anAnimal;
 		attitude = 0;
 		interest = 0;
-		dangerRadius = 1000;
-		safeRadius = 2000;
+		dangerRadius = 750;
+		safeRadius = 1500;
 	}
 
 	PVector getReactionVector(){
