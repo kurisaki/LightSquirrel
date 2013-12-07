@@ -30,7 +30,7 @@ String serial;
 
 //Environmental constants
 final PVector KINECT_ORIGO = new PVector(0,1400,-3000); //TO BE MEASURED
-final float KINECT_ANGLE = 0.862f + PI;
+final float KINECT_ANGLE = 0.862f;
 
 final int xSize = 1280;
 final int centerX = xSize * 10 / 2;
