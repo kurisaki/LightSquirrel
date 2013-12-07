@@ -205,7 +205,12 @@ float actorWidth = 300;
 float actorHeight = 300;
 
 void drawActor() {
-  fill(0, 200, 200);
+  if(locked)
+    fill(0, 200, 200);
+  else if(overActor)
+    fill(200, 200, 0);
+  else
+    fill(200, 0, 200);
 
   PVector actorPos = get3dTo2d(actor.getPosition());
   rect(actorPos.x, actorPos.y, actorWidth, actorHeight);
