@@ -103,7 +103,7 @@ void setupWorld(){
   };
 
   actor = new Actor(new PVector(0, 1000, -1500));
-  animal = new Animal(new PVector(0, 0, 0));
+  animal = new Animal(new PVector(0, 0, 0), room);
   animal.createRelationship(actor);
 }
 

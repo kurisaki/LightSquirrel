@@ -1,7 +1,6 @@
-class Animal{
+class Animal implements HasPosition {
 
 //CONSTANTS
-	static final int SLEEP_THRESHOLD = 1000;
 	static final int HIDE_THRESHOLD = 3000;
 		// TIRED: getting to a light becomes first priority.
 		// Will try to avoid other users' danger zone. If flee is triggered while tired, head straight for light.
@@ -42,12 +41,15 @@ class Animal{
 
 	Light hidingPlace; //currently hiding 
 
+	Room room;
+
 //CONSTRUCTOR
-public Animal(PVector initialPosition){
+public Animal(PVector initialPosition, Room aRoom){
 	position = initialPosition;
 	state = State.HIDING;
 	relationships = new ArrayList<ActorRelation>();
 	lightsThatIKnow = new ArrayList<Light>();
+	this.room = aRoom;
 }
 
 
@@ -69,9 +71,7 @@ public void update() {
 	updateRelations();
 	updateMoveVector();
 
-	if(energy < SLEEP_THRESHOLD){
-		sleep();
-	} else if (energy < HIDE_THRESHOLD) {
+if (energy < HIDE_THRESHOLD) {
 		hide();
 	} else if (energy < RUN_THRESHOLD) {
 		run();
@@ -82,7 +82,7 @@ public void update() {
 	position.add(moveVector);
 
 	//TODO: make sound
-	}
+	}																																												
 
 void updateRelations() {
 	for (ActorRelation relation : relationships){
@@ -97,6 +97,8 @@ void updateMoveVector() {
 		PVector vector = relation.getReactionVector();
 		moveVector.add(vector);
 	}
+
+	moveVector.add(room.getBounceVector(position));
 
 	moveVector.add(getNoise());
 
@@ -113,10 +115,6 @@ void flee() {
 
 }
 void hide() {
-	//TODO
-}
-
-void sleep() {
 	//TODO
 }
 

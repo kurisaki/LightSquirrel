@@ -3,26 +3,16 @@ class ActorRelation{
 	//CONSTANTS
 	static final int MIN_ATTITUDE = -10;
 	static final int MAX_ATTITUDE = 10;
-
-	//ATTITUDE determines speed of movement (boldness/skittishness), attraction or repulsion,
-	// sensitivity to being startled (thresholds), size of zones
 	static final int MIN_INTEREST = -10;
 	static final int MAX_INTEREST = 10;
-	//INTEREST decreases with total time exposed to user, increases with actor movement, drops when near limit is reached?
-	// determines strength of attraction/repulsion compared with others
 
 	//FIELDS
 	Actor actor;
 	Animal animal;
-
 	int attitude;
 	int interest;
-	float currentRadius;
-	float dangerRadius;
-	float safeRadius;
-    float speed = -20;
-
-
+	int dangerRadius;
+	int safeRadius;
 
 	//CONSTRUCTOR
 	public ActorRelation(Actor anActor, Animal anAnimal){
@@ -39,21 +29,11 @@ class ActorRelation{
 		PVector reaction = animal.getPosition().get();
 		//Get direction to actor
 		reaction.sub(actor.getPosition());
-		//Get distance to actor
-		currentRadius = reaction.mag();
+
 		//React according to attitude
 		reaction.normalize();
-		if(currentRadius <= dangerRadius){
-			reaction.mult(maxSpeed * attitude);
-		} else if(currentRadius > dangerRadius && currentRadius <= safeRadius){
-			//Linear drop over range of zone from maxSpeed to minSpeed
-			//TODO: make quadratic/exponential?
-			float a = (animal.getMinSpeed() - animal.getMaxSpeed()/safeRadius);
-			float f = a*(currentRadius-dangerRadius) + animal.getMaxSpeed();
-			reaction.mult(f * attitude);
-		} else if(currentRadius > safeRadius){
-			reaction.mult(1 * attitude);		
-		}
+		reaction.mult(10 * attitude);
+
 		return reaction;
 	}
 
@@ -64,12 +44,8 @@ class ActorRelation{
 		float speed = actor.getSpeed();
 		float acceleration = actor.getAcceleration();
 
-		//TODO: (possibly) Update attitude based on speed and acceleration of actor
+		//Update attitude based on speed and acceleration of actor
 		//TODO: Make more complex implementation, e.g. startle
-		//TODO: tweak settings for thresholds, and measure speed/acceleration over time…
-		//In addition to decreasing attitude, acceleration over a panic threshold will trigger the flight response.
-		//Positive modifiers for movement towards animal and proximity, negative modifier for movement away.
-		
 		if(speed > SPEED_THRESHOLD || acceleration > ACCELERATION_THRESHOLD){
 			if(attitude > MIN_ATTITUDE){
 				attitude--;
@@ -84,10 +60,5 @@ class ActorRelation{
 	void updateInterest(){
 		//TOOD
 	}
-
-
-public void updateRelationship(){
-
-}
 
 }

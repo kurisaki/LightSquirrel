@@ -1,4 +1,4 @@
-class Actor {
+class Actor implements HasPosition{
   //FIELDS
   PVector position;
   float acceleration;

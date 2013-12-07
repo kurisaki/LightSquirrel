@@ -1,0 +1,3 @@
+interface HasPosition{
+	PVector getPosition();
+}

@@ -1,4 +1,4 @@
-class Spotlight{
+class Spotlight implements HasPosition{
 //FIELDS
 
 private PVector spotPosition;

@@ -1,4 +1,4 @@
-class Light{
+class Light implements HasPosition {
 
 //FIELDS
 PVector position;

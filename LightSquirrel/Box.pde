@@ -1,4 +1,4 @@
-class Box{
+class Box implements HasPosition {
 
 //FIELDS
 
