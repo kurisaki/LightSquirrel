@@ -23,7 +23,7 @@ MidiBus myBus;
 //Serial stuff
 final int BYTE_MIN = 0;
 final int BYTE_MAX = 1;
-final boolean FAKE = true;
+final boolean FAKE = false;
 Serial myPort;
 
 String serial;
@@ -76,12 +76,12 @@ void serialSetup(){
 }
 
 void initializeDevices(){ //Remember to set everything to zero!
-  myPort.write("<setServo1," + 1350 + ">");
-  myPort.write("<setServo2," + 1500 + ">");
-  myPort.write("<setSpotState," + 2 + ">"); 
+  myPort.write("<setServo1," + (1500+90) + ">");
+  myPort.write("<setServo2," + (1500+140) + ">");
+  myPort.write("<setSpotState," + 0 + ">"); 
   myPort.write("<setBoxState," + 2 + ">"); 
-  myPort.write("<set1State," + 2 + ">"); 
-  myPort.write("<set2State," + 2 + ">"); 
+  myPort.write("<set1State," + 0 + ">"); 
+  myPort.write("<set2State," + 0 + ">"); 
 }
 
 void midiSetup(){
@@ -131,11 +131,10 @@ void draw(){
   background(0);
 
   if(!FAKE)
-    kinectStuff();
+   kinectStuff();
 
   drawAndSimulate();
   animal.update();
-  //spotlight.target(animal.getPosition());
   
 }
 
@@ -266,6 +265,8 @@ PVector get3dTo2d(PVector vector3d) {
 void drawAnimal() {
   PVector pos = get3dTo2d(animal.getPosition());
   updateSurround(pos);
+  spotlight.target(animal.getPosition());
+
   fill(255, 0, 0);
   ellipse(pos.x, pos.y, 100, 100);
 }
@@ -347,6 +348,9 @@ void mouseReleased() {
 void keyPressed(){
   if(key == 'h'){
     animal.flee(actor.getPosition());
+    myPort.write("<setSpotState," + 1 + ">"); 
+    myPort.write("<setBoxState," + 0 + ">"); 
+    
   }
 }
 
