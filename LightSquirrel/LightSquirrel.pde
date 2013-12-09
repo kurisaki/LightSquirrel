@@ -390,6 +390,14 @@ void updateSurround(PVector target){
 
   myBus.sendControllerChange(0,25,(int)diversity);
   myBus.sendControllerChange(0,24,(int)soundAngle);
-  }
+}
 
-
+/*
+Channel   CC    Control
+----------------------------------
+0     24    SoundAngle
+0     25    Diversity
+0     26    Tempo (50-177 bpm, -> 100-354 double time)
+0     27    High-pass filter (box)
+0     28    Low-pass filter (wool)
+*/

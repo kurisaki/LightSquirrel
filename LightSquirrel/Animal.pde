@@ -32,7 +32,7 @@ class Animal implements HasPosition {
 
 	float t = 0; //counter for calls to noise
 	
-	float noiseFactor = 10; //Degree of influence of noise
+	float noiseFactor = 5; //Degree of influence of noise
 
 	float maxSpeed = 50;
 	float minSpeed = 1;
@@ -120,6 +120,12 @@ class Animal implements HasPosition {
 			}
 			moveVector.add(room.getBounceVector(position));
 			moveVector.add(getNoise());
+			break;
+			case HIDING:
+			//add vector towards closest light not obstructed by actor
+			//if distance to target light < threshold, enter light.
+			//if hiding and in light, do nothing, unless touched. 
+			//if touched, enter flee.
 			break;
 
 		}
