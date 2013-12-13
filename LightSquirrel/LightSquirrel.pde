@@ -11,10 +11,9 @@ import themidibus.*;
 import java.util.*;
 
 //Values to read from arduino:
-int box1 = 0;
-int box2 = 0;
-int light1 = 0;
-int light2 = 0;
+int boxValue = 0;
+int light1Value = 0;
+int light2Value = 0;
 
 
 //MIDI stuff
@@ -24,13 +23,14 @@ MidiBus myBus;
 final int BYTE_MIN = 0;
 final int BYTE_MAX = 1;
 final boolean FAKE = false;
-Serial myPort;
+Serial servoPort;
+Serial lightPort;
 
 String serial;
 
 //Environmental constants
-final PVector KINECT_ORIGO = new PVector(0,1400,-3000); //TO BE MEASURED
-final float KINECT_ANGLE = -0.862f;
+final PVector KINECT_ORIGO = new PVector(0,1400,-3350); //TO BE MEASURED
+final float KINECT_ANGLE = -0.785f;
 
 final int xSize = 1280;
 final int centerX = xSize * 10 / 2;
@@ -71,17 +71,19 @@ void kinectSetup(){
 
 void serialSetup(){
   println(Serial.list());
-  myPort = new Serial(this, Serial.list()[4], 9600);
-  myPort.bufferUntil('\n');
+  servoPort = new Serial(this, Serial.list()[2], 9600);
+  servoPort.bufferUntil('\n');
+  lightPort = new Serial(this, Serial.list()[0], 9600);
+  lightPort.bufferUntil('\n');
 }
 
 void initializeDevices(){ //Remember to set everything to zero!
-  myPort.write("<setServo1," + (1500+90) + ">");
-  myPort.write("<setServo2," + (1500+140) + ">");
-  myPort.write("<setSpotState," + 0 + ">"); 
-  myPort.write("<setBoxState," + 2 + ">"); 
-  myPort.write("<set1State," + 0 + ">"); 
-  myPort.write("<set2State," + 0 + ">"); 
+  servoPort.write("<setServo1," + (1500+90) + ">");
+  servoPort.write("<setServo2," + (1500+140) + ">");
+  servoPort.write("<setSpotState," + 1 + ">"); 
+  lightPort.write("<setBoxState," + 0 + ">"); 
+  lightPort.write("<set1State," + 0 + ">"); 
+  lightPort.write("<set2State," + 0 + ">"); 
 }
 
 void midiSetup(){
@@ -97,16 +99,20 @@ Actor actor;
 Animal animal;
 
 void setupWorld(){
-  room = new Room(4200, 3600, 2000);
+  room = new Room(4200, 4200, 2000);
   box = new Box();
   lights = new Light[]{
-    new Light(new PVector(1000, 1000, 0)),
-    new Light(new PVector(2500, 1200, -1200)),
+    new Light(new PVector(1500, 0, -120)), //light 1
+    new Light(new PVector(-1350, 0, 850)), //light 2
   };
 
-  actor = new Actor(new PVector(0, 0, -1500));
+  actor = new Actor(new PVector(1500, 0, -1500));
   animal = new Animal(new PVector(0, 0, 0), room);
   animal.createRelationship(actor);
+  animal.discoverLight(lights[0]);
+  animal.discoverLight(lights[1]);
+  animal.discoverLight(box.getLight());
+
 }
 
 void setup(){
@@ -117,10 +123,10 @@ void setup(){
   spotlight = new Spotlight(2700);
     
   if (!FAKE) {
-    serialSetup();
     kinectSetup();
-    initializeDevices();
   }
+  serialSetup();
+  initializeDevices();
   midiSetup();
   setupWorld();  
 }
@@ -149,6 +155,7 @@ void drawAndSimulate(){
   drawAnimal();
   popMatrix();
   moveActor();
+  updateLights();
 
   drawInfo();
 }
@@ -161,7 +168,7 @@ void drawRelations(){
     ellipse(actorPos.x, actorPos.y, relation.getInterestRadius(), relation.getInterestRadius());
     fill(50, 100, 0);
     ellipse(actorPos.x, actorPos.y, relation.getDangerRadius(), relation.getDangerRadius());
-  } 
+  }
 }
 
 void drawInfo(){
@@ -265,7 +272,9 @@ PVector get3dTo2d(PVector vector3d) {
 void drawAnimal() {
   PVector pos = get3dTo2d(animal.getPosition());
   updateSurround(pos);
-  spotlight.target(animal.getPosition());
+  PVector animalPosition = animal.getPosition().get();
+  //animalPosition = room.limitToFloor(animalPosition);
+  spotlight.target(animalPosition);
 
   fill(255, 0, 0);
   ellipse(pos.x, pos.y, 100, 100);
@@ -284,6 +293,7 @@ void kinectStuff(){
   if (userList.length >= 1){
     kinect.getCoM(userList[0], com);
     PVector transformed = transformCom(com);
+    transformed = room.limitToFloor(transformed);
     actor.setPosition(transformed);
   }
 }
@@ -347,23 +357,37 @@ void mouseReleased() {
 
 void keyPressed(){
   if(key == 'h'){
-    animal.flee(actor.getPosition());
-    myPort.write("<setSpotState," + 1 + ">"); 
-    myPort.write("<setBoxState," + 0 + ">"); 
+    animal.isInLight = false;
+ //   animal.flee(actor.getPosition());
+ //   servoPort.write("<setSpotState," + 1 + ">"); 
+ //   servoPort.write("<setBoxState," + 0 + ">"); 
     
   }
+    if(key == 'l'){
+      lights[0].setTouched(1);
+      lights[1].setTouched(1);
+      box.getLight().setTouched(1);
+    }
 }
 
-
+void keyReleased(){
+    if(key == 'l'){
+      lights[0].setTouched(0);
+      lights[1].setTouched(0);
+    }
+}
 void serialEvent(Serial p){
-    String serial = myPort.readString();
+    String serial = lightPort.readString();
     if (serial != null) {  //if the string is not empty, print the following    
       int[] a = int(split(serial, ','));
-      box1 = a[0];
-      box2 = a[1];
-      light1 = a[2];
-      light2 = a[3];
-      println(box1 + " " + box2 + " " + light1 + " " + light2);
+      boxValue = a[0];
+      light1Value = a[1];
+      light2Value = a[2];
+      
+      lights[0].setTouched(light1Value);
+      lights[1].setTouched(light2Value);
+
+      println(boxValue + " " + light1Value + " " + light2Value);
     }  
 }
 
@@ -377,7 +401,7 @@ void onLostUser(int userID){
 
 void updateSurround(PVector target){
   //Determine angle and map to MIDI value
-  float maxRadius = 2000.0;
+  float maxRadius = 2970.0;
   float soundAngle = atan2(-target.x, target.y);
   text(degrees(soundAngle), 500,500);
   if(soundAngle >= 0){
@@ -390,6 +414,13 @@ void updateSurround(PVector target){
 
   myBus.sendControllerChange(0,25,(int)diversity);
   myBus.sendControllerChange(0,24,(int)soundAngle);
+}
+
+void updateLights(){
+  servoPort.write("<setSpotState," + spotlight.getState() + ">"); 
+  lightPort.write("<setBoxState," + box.getLight().getState() + ">"); 
+  lightPort.write("<set1State," + lights[0].getState() + ">"); 
+  lightPort.write("<set2State," + lights[1].getState() + ">"); 
 }
 
 /*

@@ -22,8 +22,8 @@ class Actor implements HasPosition{
     //TODO: create link of some sort between game user and kinect user
     // and get the ability to access the points belonging to the user
     // in order to calculate size of user and amount of arm movement
-    position = p;
-    positions.add(p);
+    setPosition(p);
+    //positions.add(p);
 
   }
 

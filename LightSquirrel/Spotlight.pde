@@ -8,6 +8,8 @@ PVector XYcomponent;
 
 final float OFFSET = 85; //fixed, distance from base to optical axis
 
+int state = 1; //0 = off, 1 = on
+
 //CONSTRUCTOR - presume aligned vertically with box
 public Spotlight(int roomHeight){
   spotPosition = new PVector(0, roomHeight - OFFSET, 0);
@@ -22,6 +24,14 @@ PVector getPosition(){
   return spotPosition;
 }
 
+public int getState(){
+  return state;
+}
+
+public void setState(int i){
+  state = i;
+}
+
 void target(PVector target){
   PVector targetVector = PVector.sub(target, spotPosition);
   
@@ -32,24 +42,24 @@ void target(PVector target){
   float angleXY;
   
   if(targetVector.z<0){
-    angleZY = -degrees(PVector.angleBetween(targetVector,XYcomponent));
-  } else {
     angleZY = degrees(PVector.angleBetween(targetVector,XYcomponent));
+  } else {
+    angleZY = -degrees(PVector.angleBetween(targetVector,XYcomponent));
   }
     if(targetVector.x<0){
-    angleXY = -degrees(PVector.angleBetween(targetVector,ZYcomponent));
+    angleXY = - degrees(PVector.angleBetween(targetVector,ZYcomponent));
   } else {
     angleXY = degrees(PVector.angleBetween(targetVector,ZYcomponent));
   }
   
   //Remember to calibrate servos!
-  int servo1 = (int)map(angleZY, 90,-90,600+90,2400+90);
-  servo1 = constrain(servo1, 700,2100);
-  int servo2 = (int)map(angleXY, -90,90,600+140,2400+140);
+  int servo2 = (int)map(angleZY, -90,90,600+140,2400+140);
   servo2 = constrain(servo2, 700,2300);
+  int servo1 = (int)map(angleXY, -90,90,600+100,2400+100);
+  servo1 = constrain(servo1, 700,2300);
 
-  myPort.write("<setServo1," + servo1 + ">");
-  myPort.write("<setServo2," + servo2 + ">");
+  servoPort.write("<setServo1," + servo1 + ">");
+  servoPort.write("<setServo2," + servo2 + ">");
   }
 
 }

@@ -1,8 +1,8 @@
 class ActorRelation{
 
 	//CONSTANTS
-	static final int MIN_ATTITUDE = -100;
-	static final int MAX_ATTITUDE = 10;
+	static final float MIN_ATTITUDE = -10;
+	static final float MAX_ATTITUDE = 10;
 
 	static final int MAX_FACTOR = 10;
 	static final int MIN_FACTOR = 1;
@@ -16,7 +16,7 @@ class ActorRelation{
 	//FIELDS
 	Actor actor;
 	Animal animal;
-	int attitude;
+	float attitude;
 	int interest;
 
 	//CONSTRUCTOR
@@ -82,8 +82,8 @@ class ActorRelation{
 		//END TESTING
 
 
-			final float SPEED_THRESHOLD = 100;
-			final float ACCELERATION_THRESHOLD = 100;
+			final float SPEED_THRESHOLD = 30;
+			final float ACCELERATION_THRESHOLD = 30;
 
 			float speed = actor.getSpeed();
 			float acceleration = actor.getAcceleration();
@@ -92,11 +92,11 @@ class ActorRelation{
 		//TODO: Make more complex implementation, e.g. startle
 			if(speed > SPEED_THRESHOLD || acceleration > ACCELERATION_THRESHOLD){
 				if(attitude > MIN_ATTITUDE){
-					attitude--;
+					attitude-=0.5;
 				}
 			} else {
 				if(attitude < MAX_ATTITUDE){				
-					attitude++;
+					attitude+= 0.1;
 				}
 			}
 
